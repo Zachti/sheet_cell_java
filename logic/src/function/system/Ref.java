@@ -1,0 +1,74 @@
+package function.system;
+
+import cell.Cell;
+import cell.observability.Subject;
+import function.Function;
+import function.enums.NumberOfArgs;
+import position.PositionFactory;
+import position.interfaces.IPosition;
+import sheet.Sheet;
+import store.SetContextStore;
+import store.TypedContextStore;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static common.utils.ValueParser.isNumeric;
+
+public final class Ref extends Function<Object> {
+
+    @Override
+    public Object execute(List<Object> args) {
+        checkNumberOfArgs(args);
+        Cell referencedCell = validateAndSetObservers(args.getFirst());
+        String value = referencedCell.getEffectiveValue().replace(",", "");
+        return isNumeric(value) ? Double.parseDouble(value) : value;
+    }
+
+    @Override
+    protected int getNumberOfArgs() { return  NumberOfArgs.ONE.toInt(); }
+
+    private Cell validateAndSetObservers(Object arg) {
+        Cell referencedCell = argToCell(arg);
+        Subject callingCell = getCallingCell();
+        referencedCell.addObserver(callingCell);
+        callingCell.addObservable(referencedCell);
+        return referencedCell;
+    }
+
+    private Subject getCallingCell() {
+        Subject callingCell = TypedContextStore.getSubjectStore().getContext();
+        return Optional.ofNullable(callingCell)
+                .orElseThrow(() -> new IllegalArgumentException("No calling cell context set"));
+    }
+
+    private Cell argToCell(Object arg) {
+        IPosition position = validateArgIsCell((String) arg);
+        return searchCellInStores(position);
+    }
+
+    private IPosition validateArgIsCell(String arg) {
+        char columnLetter = arg.toUpperCase().charAt(0);
+        int rowIndex = Integer.parseInt(arg.substring(1));
+        return PositionFactory.create(rowIndex, columnLetter);
+    }
+
+    private Cell searchCellInStores(IPosition position) {
+        return Optional.ofNullable(TypedContextStore.getSheetStore().getContext())
+                .map(sheet -> searchInSheetStore(sheet, position))
+                .orElseGet(() -> searchInCellsStore(position));
+    }
+
+    private Cell searchInSheetStore(Sheet sheet, IPosition toSearch) {
+        sheet.validatePositionOnSheet(toSearch);
+        return sheet.getCellByPosition(toSearch);
+    }
+
+    private Cell searchInCellsStore(IPosition toSearch) {
+        Set<Cell> cells = SetContextStore.getCellSetStore().getContext();
+        return cells.stream().filter(cell -> cell.getPosition().equals(toSearch))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No cell found at position " + toSearch));
+    }
+}

@@ -1,0 +1,24 @@
+package drawer;
+
+public abstract class Drawer implements IDrawer{
+
+    public abstract void draw();
+
+    @Override
+    public void draw(String header) {
+        display(String.format("%s:", header));
+        draw();
+    }
+
+    protected String centralizedValue(String value, int length) {
+        int spaces = length - value.length();
+        int padLeft = spaces / 2;
+        int padRight = spaces - padLeft;
+        return String.format("%" + (padLeft + value.length()) + "s", value).concat(" ".repeat(padRight));
+    }
+
+    protected void display(String text) { System.out.println(text); }
+
+    protected void display(String format, Object... args) { System.out.printf(format, args); }
+
+}

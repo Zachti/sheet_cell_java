@@ -1,0 +1,12 @@
+SheetCell.iml
+.idea
+out/
+engine.iml
+logic.iml
+misc.xml
+modules.xml
+vcs.xml
+ui.iml
+shared.iml
+file.iml
+lib/
