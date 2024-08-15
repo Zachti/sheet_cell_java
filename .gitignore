@@ -8,5 +8,5 @@ modules.xml
 vcs.xml
 ui.iml
 shared.iml
-file.iml
+files.iml
 lib/

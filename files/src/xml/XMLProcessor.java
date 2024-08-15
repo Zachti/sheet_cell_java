@@ -1,6 +1,6 @@
 package xml;
 
-import dto.PositionDetails;
+import xml.dto.PositionDetails;
 import jaxb.generated.UiSheet;
 import jaxb.marshal.Marshal;
 import jaxb.uiSheetFactory.SheetFactory;
