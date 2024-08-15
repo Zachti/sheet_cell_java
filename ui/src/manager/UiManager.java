@@ -52,8 +52,8 @@ public final class UiManager implements IUIManager{
     private void loadSheet() {
         UiSheet sheet = menu.getSheet();
         engine = new Engine(sheet);
-        int rows = sheet.getSheetBuilder().getNumberOfRows();
-        int cols = sheet.getSheetBuilder().getNumberOfCols();
+        int rows = sheet.getLayout().getRows();
+        int cols = sheet.getLayout().getColumns();
         sheetDrawer = new SheetDrawer(new UiUnits(sheet.getUiUnits()), rows, cols, sheet.getCells());
     }
 

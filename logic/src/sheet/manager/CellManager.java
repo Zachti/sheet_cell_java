@@ -20,11 +20,9 @@ public class CellManager implements ICellManager {
     protected Map<IPosition, Cell> position2Cell;
     private final IGraph dependencyGraph;
     private List<Cell> topologicalSort;
-    private final SheetBuilder sheetBuilder;
 
     public CellManager(int numberOfRows, int numberOfCols) {
-        sheetBuilder = new SheetBuilder(numberOfRows, numberOfCols);
-        position2Cell= sheetBuilder.build();
+        position2Cell= new SheetBuilder(numberOfRows, numberOfCols).build();
         dependencyGraph = new DependencyGraph(position2Cell);
         topologicalSort = dependencyGraph.topologicalSort();
     }
@@ -35,7 +33,6 @@ public class CellManager implements ICellManager {
         int toUpdateCellIndex = getUpdateOrder(cell);
         try {
             cell.update(value);
-            dependencyGraph.topologicalSort();
             recalculateCellsFromIndex(toUpdateCellIndex);
         } catch (Exception e) {
             cell.onUpdateFail();
@@ -82,9 +79,6 @@ public class CellManager implements ICellManager {
     @Override
     public Map<IPosition, Cell> getCells() { return position2Cell; }
 
-    @Override
-    public SheetBuilder getSheetBuilder() { return sheetBuilder; }
-
     private Map<IPosition, Cell> historicDetailsToHistoricPosition2Cell(Map<IPosition, CellBasicDetails> historicPosition2Cell) {
         Map<IPosition, Cell> position2Cell = new HashMap<>();
         historicPosition2Cell.forEach((position, cellBasicDetails) ->
@@ -103,6 +97,7 @@ public class CellManager implements ICellManager {
     }
 
     private void recalculateCellsFromIndex(int startIndex) {
+        dependencyGraph.topologicalSort();
         topologicalSort.stream()
                 .skip(startIndex + 1)
                 .forEach(Cell::setEffectiveValue);

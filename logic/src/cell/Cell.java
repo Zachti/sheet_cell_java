@@ -16,7 +16,8 @@ public final class Cell extends Subject implements ICell {
     private final IPosition position;
 
     public Cell(CreateCellDto createCellDto) {
-        effectiveValue = new EffectiveValue(createCellDto.originalValue(), createCellDto.originalValue(), this);
+        Object originalValue = createCellDto.originalValue();
+        effectiveValue = new EffectiveValue(originalValue, originalValue, this);
         position = createCellDto.getPosition();
         versionHistory = new VersionHistory<>(getBasicDetails(), 1);
     }

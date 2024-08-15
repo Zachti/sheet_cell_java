@@ -7,7 +7,6 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import common.interfaces.IGenericHandler;
 import position.interfaces.IPosition;
-import sheet.builder.SheetBuilder;
 import sheet.dto.CopySheetDto;
 import sheet.dto.CreateSheetDto;
 import sheet.interfaces.ISheet;
@@ -105,7 +104,5 @@ public class Sheet implements ISheet {
             return null;
         });
     }
-
-    public final SheetBuilder getSheetBuilder() { return cellManager.getSheetBuilder(); }
 
 }
