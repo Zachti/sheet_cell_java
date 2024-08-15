@@ -55,7 +55,7 @@ public class CellManager implements ICellManager {
                 .flatMap(Collection::stream)
                 .forEach(cell -> position2Cell.put(cell.getPosition(), cell));
 
-        position2Cell.values().forEach(Cell::onSheetInit);
+        dependencyGraph.topologicalSort().forEach(Cell::onSheetInit);
 
         return Objects.nonNull(insertionOrder) ? insertionOrder.size() : 0;
     }
@@ -114,7 +114,7 @@ public class CellManager implements ICellManager {
                 .forEach(Cell::revertUpdate);
     }
 
-    public List<Cell> getInsertionOrderOrNull(List<Cell> cells) {
+    public static List<Cell> getInsertionOrderOrNull(List<Cell> cells) {
         return Optional.ofNullable(cells)
                 .map(cellList -> cellList.stream()
                         .collect(Collectors.toMap(
