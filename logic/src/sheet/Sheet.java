@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Sheet implements ISheet {
-    private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private final String name;
     protected int version = 1;
+    private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
     protected final ICellManager cellManager;
 
