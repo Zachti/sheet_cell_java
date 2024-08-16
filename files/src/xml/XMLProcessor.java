@@ -15,7 +15,7 @@ public final class XMLProcessor implements IXMLProcessor {
     SheetConfiguration sheetConfiguration;
 
     @Override
-    public SheetConfiguration process(SheetOption choice, String filePath) throws Exception {
+    public SheetConfiguration parse(SheetOption choice, String filePath) throws Exception {
         SheetFactory uiSheetFactory = SheetFactory.newInstance(choice);
         sheetConfiguration = uiSheetFactory.create(filePath);
         return sheetConfiguration;
