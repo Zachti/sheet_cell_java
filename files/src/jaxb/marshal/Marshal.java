@@ -17,7 +17,7 @@ import java.util.*;
 public final class Marshal implements IWriter {
 
     @Override
-    public void saveSheet(SheetConfiguration configuration, String filePath) throws JAXBException {
+    public void writeSheet(SheetConfiguration configuration, String filePath) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(STLSheet.class);
         File outputXmlFile = new File(filePath);
         Marshaller marshaller = context.createMarshaller();

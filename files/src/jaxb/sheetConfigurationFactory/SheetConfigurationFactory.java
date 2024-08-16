@@ -1,4 +1,4 @@
-package jaxb.uiSheetFactory;
+package jaxb.sheetConfigurationFactory;
 
 import cell.Cell;
 import common.enums.SheetOption;
@@ -15,7 +15,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SheetFactory {
+public abstract class SheetConfigurationFactory {
     protected STLSheet stlSheet;
 
     public SheetConfiguration create(String filePath) throws JAXBException {
@@ -34,14 +34,14 @@ public abstract class SheetFactory {
         safeExecute(() -> createCell(stlCell, cells), cells);
     }
 
-    public static SheetFactory newInstance(SheetOption option) {
+    public static SheetConfigurationFactory newInstance(SheetOption option) {
         return createFactoryMap().get(option);
     }
 
-    private static Map<SheetOption, SheetFactory> createFactoryMap() {
+    private static Map<SheetOption, SheetConfigurationFactory> createFactoryMap() {
         return new EnumMap<>(Map.of(
-                SheetOption.NEW, new NewSheetFactory(),
-                SheetOption.LOAD, new ExistingSheetFactory()
+                SheetOption.NEW, new NewSheetConfigurationFactory(),
+                SheetOption.LOAD, new ExistingSheetConfigurationFactory()
         ));
     }
 

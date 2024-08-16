@@ -1,4 +1,4 @@
-package jaxb.uiSheetFactory;
+package jaxb.sheetConfigurationFactory;
 
 import cell.Cell;
 import cell.dto.CreateCellDto;
@@ -11,7 +11,7 @@ import sheet.dto.CreateSheetDto;
 import java.util.LinkedList;
 import java.util.List;
 
-public class NewSheetFactory extends SheetFactory {
+public class NewSheetConfigurationFactory extends SheetConfigurationFactory {
 
     @Override
     protected SheetConfiguration createSheet () {

@@ -3,7 +3,7 @@ package xml;
 import common.enums.SheetOption;
 import jaxb.dto.SheetConfiguration;
 import jaxb.marshal.Marshal;
-import jaxb.uiSheetFactory.SheetFactory;
+import jaxb.sheetConfigurationFactory.SheetConfigurationFactory;
 import position.interfaces.IPosition;
 import xml.dto.PositionDetails;
 
@@ -16,14 +16,13 @@ public final class XMLProcessor implements IXMLProcessor {
 
     @Override
     public SheetConfiguration parse(SheetOption choice, String filePath) throws Exception {
-        SheetFactory uiSheetFactory = SheetFactory.newInstance(choice);
-        sheetConfiguration = uiSheetFactory.create(filePath);
+        sheetConfiguration = SheetConfigurationFactory.newInstance(choice).create(filePath);
         return sheetConfiguration;
     }
 
     @Override
     public void save(String filePath) throws Exception {
-        marshal.saveSheet(sheetConfiguration, filePath);
+        marshal.writeSheet(sheetConfiguration, filePath);
     }
 
     @Override
