@@ -2,8 +2,8 @@ package cell.tree;
 
 import cell.Cell;
 import cell.tree.enums.InputSymbols;
-import cell.tree.interfaces.ITreeHandler;
 import cell.tree.interfaces.ITree;
+import cell.tree.interfaces.ITreeHandler;
 import cell.tree.node.EvaluationNode;
 import cell.tree.node.INode;
 

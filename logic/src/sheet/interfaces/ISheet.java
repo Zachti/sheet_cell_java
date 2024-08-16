@@ -5,7 +5,6 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import position.interfaces.IPosition;
 
-import java.util.List;
 import java.util.Map;
 
 public interface ISheet extends Cloneable {

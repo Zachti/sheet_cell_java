@@ -2,9 +2,9 @@ package jaxb.uiSheetFactory;
 
 import cell.Cell;
 import cell.dto.CreateCellDto;
+import jaxb.dto.SheetConfiguration;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLSheet;
-import jaxb.dto.SheetConfiguration;
 import sheet.Sheet;
 import sheet.dto.CreateSheetDto;
 
