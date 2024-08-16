@@ -1,11 +1,11 @@
 package xml;
 
-import xml.dto.PositionDetails;
 import jaxb.generated.UiSheet;
 import jaxb.marshal.Marshal;
 import jaxb.uiSheetFactory.SheetFactory;
 import menu.enums.SheetOption;
 import position.interfaces.IPosition;
+import xml.dto.PositionDetails;
 
 import static common.utils.InputValidation.isInRange;
 import static common.utils.InputValidation.validateOrThrow;

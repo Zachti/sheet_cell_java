@@ -108,7 +108,7 @@ public final class Cell extends Subject implements ICell {
     @Override
     public void onSheetInit() {
         observers.clear();
-        effectiveValue =  new EffectiveValue(getOriginalValue(), this);
+        setEffectiveValue();
     }
 
     public static Cell fromBasicDetails(CellBasicDetails details) { return new Cell(details); }
