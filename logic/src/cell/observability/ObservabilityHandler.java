@@ -22,7 +22,7 @@ public abstract class ObservabilityHandler implements IObservabilityHandler<Subj
 
     @Override
     public final String toString() {
-        return String.format("List of observers: %s", position2Cell.keySet());
+        return String.format("%s", position2Cell.keySet());
     }
 
     @Override
