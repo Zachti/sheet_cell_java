@@ -6,15 +6,16 @@ import cell.dto.CellXmlPayload;
 import position.interfaces.IPosition;
 
 public interface ICell extends Cloneable{
-    void setOriginalValue(Object originalValue);
+    void setOriginalValue(String originalValue);
     String getOriginalValue();
     Object getEffectiveValue();
     void setEffectiveValue();
     CellBasicDetails getPastVersion(int version);
     IPosition getPosition();
-    void update(Object originalValue);
+    void update(String originalValue);
     CellDetails getDetails();
     CellBasicDetails getBasicDetails();
     CellXmlPayload getCellXmlPayload();
     void addNewVersion(int version);
+    void onSheetInit();
 }

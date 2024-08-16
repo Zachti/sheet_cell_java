@@ -8,7 +8,7 @@ import position.interfaces.IPosition;
 import java.util.Map;
 
 public interface ISheet extends Cloneable {
-    void updateCell(IPosition position, Object value);
+    void updateCell(IPosition position, String value);
     Map<IPosition, Cell> getPastVersion(int version);
     Cell getCellByPosition(IPosition position);
     String getName();

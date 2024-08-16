@@ -11,21 +11,21 @@ import static common.utils.ValueParser.parseValue;
 
 public final class EffectiveValue implements IEffectiveValue {
     private Object effectiveValue;
-    private Object originalValue;
+    private String originalValue;
     private ITree evaluationTree;
     private CellType type;
-    private final Cell parent;
+    private Cell parent;
 
-    public EffectiveValue(Object originalValue, Cell Parent) {
-        this.type = CellType.fromString(originalValue.toString());
+    public EffectiveValue(String originalValue, Cell Parent) {
+        this.type = CellType.fromString(originalValue);
         this.parent = Parent;
         this.originalValue = originalValue;
         evaluationTree = createTree();
         effectiveValue = evaluationTree.evaluate();
     }
 
-    public EffectiveValue(Object originalValue, Object effectiveValue, Cell Parent) {
-        this.type = CellType.fromString(originalValue.toString());
+    public EffectiveValue(String originalValue, Object effectiveValue, Cell Parent) {
+        this.type = CellType.fromString(originalValue);
         this.parent = Parent;
         this.originalValue = originalValue;
         this.effectiveValue = effectiveValue;
@@ -41,19 +41,26 @@ public final class EffectiveValue implements IEffectiveValue {
     }
 
     @Override
-    public String getOriginalValue() { return parseValue(originalValue.toString()); }
+    public String getOriginalValue() { return parseValue(originalValue); }
 
     @Override
-    public void setOriginalValue(Object originalValue) {
-        this.type = CellType.fromString(originalValue.toString());
+    public void setOriginalValue(String originalValue) {
+        this.type = CellType.fromString(originalValue);
         this.originalValue = originalValue;
         setEffectiveValue();
     }
 
     @Override
     public EffectiveValue clone() {
-        Cell parent = Cell.fromBasicDetails(this.parent.getBasicDetails());
-        return new EffectiveValue(originalValue, effectiveValue, parent);
+        try {
+            EffectiveValue clone = (EffectiveValue) super.clone();
+            clone.parent = Cell.fromBasicDetails(this.parent.getBasicDetails());
+            clone.effectiveValue = effectiveValue;
+            clone.originalValue = originalValue;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Clone not supported");
+        }
     }
 
     private ITree createTree() {

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ICellManager {
-    Cell update(IPosition position, Object value, int version);
+    Cell update(IPosition position, String value, int version);
     int initializeCells(List<Cell> cells);
     Map<IPosition, Cell> computePastVersion(int version);
     Cell getCellByPosition(IPosition position);

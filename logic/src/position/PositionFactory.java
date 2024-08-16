@@ -12,4 +12,6 @@ public class PositionFactory {
 
         return cachedPositions.computeIfAbsent(key, _ -> new Position(row, column));
     }
+
+    private PositionFactory() {}
 }

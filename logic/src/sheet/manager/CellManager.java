@@ -28,7 +28,7 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public Cell update(IPosition position, Object value, int version) {
+    public Cell update(IPosition position, String value, int version) {
         Cell cell = getCellOrThrow(position);
         int toUpdateCellIndex = getUpdateOrder(cell);
         try {
