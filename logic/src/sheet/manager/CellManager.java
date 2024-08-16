@@ -93,7 +93,7 @@ public class CellManager implements ICellManager {
 
     private int getUpdateOrder(Cell cell) {
         topologicalSort = dependencyGraph.topologicalSort();
-        return dependencyGraph.topologicalSort().indexOf(cell);
+        return topologicalSort.indexOf(cell);
     }
 
     private void recalculateCellsFromIndex(int startIndex) {

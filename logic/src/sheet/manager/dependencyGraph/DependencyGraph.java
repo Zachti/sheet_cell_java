@@ -9,8 +9,8 @@ public class DependencyGraph implements IGraph {
     public final Map<Cell, Set<IPosition>> dependencyGraph = new HashMap<>();
     private final Map<IPosition, Cell> positionToType;
 
-    public DependencyGraph(Map<IPosition, Cell> positionToType) {
-        this.positionToType = positionToType;
+    public DependencyGraph(Map<IPosition, Cell> position2Cell) {
+        this.positionToType = position2Cell;
     }
 
     private void buildGraph() {

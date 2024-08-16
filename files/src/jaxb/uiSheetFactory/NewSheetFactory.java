@@ -28,6 +28,7 @@ public class NewSheetFactory extends SheetFactory {
         int rows = sheet.getSTLLayout().getRows();
         int cols = sheet.getSTLLayout().getColumns();
         LinkedList<Cell> cells = xmlCellsToCells(sheet.getSTLCells().getSTLCell());
+        safeExecute(() -> cells.forEach(Cell::setEffectiveValue), cells);
         return new CreateSheetDto(name, rows, cols, cells);
     }
 
