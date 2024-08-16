@@ -31,9 +31,7 @@ public abstract class SheetFactory {
     protected abstract void createCell(STLCell stlCell, LinkedList<Cell> cells);
 
     protected void safeCreateCell(STLCell stlCell, LinkedList<Cell> cells) {
-        SetContextStore.getCellSetStore().setContext(cells);
-        createCell(stlCell, cells);
-        SetContextStore.getCellSetStore().clearContext();
+        safeExecute(() -> createCell(stlCell, cells), cells);
     }
 
     public static SheetFactory newInstance(SheetOption option) {
@@ -45,5 +43,11 @@ public abstract class SheetFactory {
                 SheetOption.NEW, new NewSheetFactory(),
                 SheetOption.LOAD, new ExistingSheetFactory()
         ));
+    }
+
+    protected void safeExecute(Runnable runnable,  LinkedList<Cell> cells) {
+        SetContextStore.getCellSetStore().setContext(cells);
+        runnable.run();
+        SetContextStore.getCellSetStore().clearContext();
     }
 }
