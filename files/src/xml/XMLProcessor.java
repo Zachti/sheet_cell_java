@@ -1,6 +1,6 @@
 package xml;
 
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
 import jaxb.marshal.Marshal;
 import jaxb.uiSheetFactory.SheetFactory;
 import menu.enums.SheetOption;
@@ -12,24 +12,24 @@ import static common.utils.InputValidation.validateOrThrow;
 
 public final class XMLProcessor implements IXMLProcessor {
     Marshal marshal = new Marshal();
-    UiSheet uiSheet;
+    SheetConfiguration sheetConfiguration;
 
     @Override
-    public UiSheet process(SheetOption choice, String filePath) throws Exception {
+    public SheetConfiguration process(SheetOption choice, String filePath) throws Exception {
         SheetFactory uiSheetFactory = SheetFactory.newInstance(choice);
-        uiSheet = uiSheetFactory.create(filePath);
-        return uiSheet;
+        sheetConfiguration = uiSheetFactory.create(filePath);
+        return sheetConfiguration;
     }
 
     @Override
     public void save(String filePath) throws Exception {
-        marshal.saveSheet(uiSheet, filePath);
+        marshal.saveSheet(sheetConfiguration, filePath);
     }
 
     @Override
     public IPosition validatePosition(IPosition position) {
-        char lastCol = (char)('A' + uiSheet.getLayout().getColumns() - 1);
-        int lastRow = uiSheet.getLayout().getRows();
+        char lastCol = (char)('A' + sheetConfiguration.layout().getColumns() - 1);
+        int lastRow = sheetConfiguration.layout().getRows();
         validateOrThrow(
                 new PositionDetails(position.column(), position.row(), lastCol, lastRow),
                 details -> isInRange(details.column(), 'A', details.lastCol()) && isInRange(details.row(), 1, details.lastRow()),

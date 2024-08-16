@@ -1,7 +1,7 @@
 package jaxb.marshal;
 
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
 
 public interface IWriter {
-    void saveSheet(UiSheet sheet, String filePath) throws Exception;
+    void saveSheet(SheetConfiguration configuration, String filePath) throws Exception;
 }

@@ -6,6 +6,7 @@ import cell.dto.CellXmlPayload;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import jaxb.dto.SheetConfiguration;
 import jaxb.generated.*;
 import position.interfaces.IPosition;
 import store.TypedContextStore;
@@ -16,22 +17,22 @@ import java.util.*;
 public final class Marshal implements IWriter {
 
     @Override
-    public void saveSheet(UiSheet sheet, String filePath) throws JAXBException {
+    public void saveSheet(SheetConfiguration configuration, String filePath) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(STLSheet.class);
         File outputXmlFile = new File(filePath);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(uiSheetToStlSheet(sheet), outputXmlFile);
+        marshaller.marshal(uiSheetToStlSheet(configuration), outputXmlFile);
     }
 
-    private STLSheet uiSheetToStlSheet(UiSheet sheet) {
-        TypedContextStore.getSheetStore().setContext(sheet);
+    private STLSheet uiSheetToStlSheet(SheetConfiguration configuration) {
+        TypedContextStore.getSheetStore().setContext(configuration.sheet());
         STLSheet stlSheet = new STLSheet();
-        stlSheet.setName(sheet.getName());
-        stlSheet.setSTLLayout(sheet.getLayout());
-        stlSheet.setSTLCells(cellsToStlCells(sheet.getCells().values().stream().toList()));
-        stlSheet.setVersion(sheet.getVersion());
-        stlSheet.setSTLVersion2Count(createVersionToCount(sheet.getUpdate2VersionCount()));
+        stlSheet.setName(configuration.sheet().getName());
+        stlSheet.setSTLLayout(configuration.layout());
+        stlSheet.setSTLCells(cellsToStlCells(configuration.sheet().getCells().values().stream().toList()));
+        stlSheet.setVersion(configuration.sheet().getVersion());
+        stlSheet.setSTLVersion2Count(createVersionToCount(configuration.sheet().getUpdate2VersionCount()));
         TypedContextStore.getSheetStore().clearContext();
         return stlSheet;
     }

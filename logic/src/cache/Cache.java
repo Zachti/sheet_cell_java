@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static java.util.Objects.requireNonNull;
 
 public final class Cache<K, V> implements ICache<K, V> { // small in memory LRU cache
-    private final LinkedHashMap<K, V> cacheMap;
+    private final Map<K, V> cacheMap;
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private final DelayQueue<IExpiringKey<K>> delayQueue = new DelayQueue<>();
     private final Map<K, IExpiringKey<K>> expiringKeys = new HashMap<>();

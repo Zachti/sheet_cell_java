@@ -1,24 +1,25 @@
 package cell.observability;
 
 import cell.observability.interfaces.IObservabilityHandler;
+import cell.observability.interfaces.ISubject;
 import position.interfaces.IPosition;
 
 import java.util.*;
 import java.util.function.Consumer;
 
-public abstract class ObservabilityHandler implements IObservabilityHandler<Subject> {
-    protected Map<IPosition, Subject> position2Cell = new HashMap<>();
-    protected Subject parent;
+public abstract class ObservabilityHandler implements IObservabilityHandler<ISubject> {
+    protected Map<IPosition, ISubject> position2Cell = new HashMap<>();
+    protected ISubject parent;
 
-    public ObservabilityHandler(Subject parent) {
+    public ObservabilityHandler(ISubject parent) {
         this.parent = parent;
     }
 
     @Override
-    public final void add(Subject subject) { position2Cell.put(subject.getPosition(), subject); }
+    public final void add(ISubject subject) { position2Cell.put(subject.getPosition(), subject); }
 
     @Override
-    public final void remove(Subject subject) { position2Cell.remove(subject.getPosition()); }
+    public final void remove(ISubject subject) { position2Cell.remove(subject.getPosition()); }
 
     @Override
     public final String toString() {
@@ -32,12 +33,12 @@ public abstract class ObservabilityHandler implements IObservabilityHandler<Subj
     public final Set<IPosition> keySet() { return Set.copyOf(position2Cell.keySet()); }
 
     @Override
-    public final Collection<Subject> getValues() { return position2Cell.values(); }
+    public final Collection<ISubject> getValues() { return position2Cell.values(); }
 
     @Override
     public abstract void clear();
 
-    protected void safeExecute(Consumer<Subject> updateOperation) {
+    protected void safeExecute(Consumer<ISubject> updateOperation) {
         new ArrayList<>(position2Cell.values()).forEach(updateOperation);
     }
 }

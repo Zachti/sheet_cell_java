@@ -1,8 +1,10 @@
 package cell.observability;
 
+import cell.observability.interfaces.ISubject;
+
 public final class Observers extends ObservabilityHandler {
 
-    public Observers(Subject parent) { super(parent); }
+    public Observers(ISubject parent) { super(parent); }
 
     @Override
     public void clear() {

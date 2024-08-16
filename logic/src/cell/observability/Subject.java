@@ -6,22 +6,22 @@ import cell.observability.interfaces.ISubject;
 import position.interfaces.IPosition;
 import store.SetContextStore;
 
-public abstract class Subject implements ISubject,  IObservable<Subject>, IObserver<Subject> {
+public abstract class Subject implements ISubject,  IObservable<ISubject>, IObserver<ISubject> {
 
     protected Observers observers = new Observers(this);
     protected Observables observables = new Observables(this);
 
     @Override
-    public final void addObserver(Subject observer) { observers.add(observer); }
+    public final void addObserver(ISubject observer) { observers.add(observer); }
 
     @Override
-    public final void removeObserver(Subject observer) { observers.remove(observer); }
+    public final void removeObserver(ISubject observer) { observers.remove(observer); }
 
     @Override
-    public final void addObservable(Subject observed) { observables.add(observed); }
+    public final void addObservable(ISubject observed) { observables.add(observed); }
 
     @Override
-    public final void removeObservable(Subject observed) { observables.remove(observed); }
+    public final void removeObservable(ISubject observed) { observables.remove(observed); }
 
     @Override
     public final int getObserversCount() { return observers.size(); }

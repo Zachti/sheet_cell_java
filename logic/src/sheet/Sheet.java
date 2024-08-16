@@ -83,6 +83,12 @@ public class Sheet implements ISheet {
     @Override
     public final void validatePositionOnSheet(IPosition position) { cellManager.validatePositionOnSheet(position); }
 
+    @Override
+    public Map<IPosition, Cell> getCells() { return cellManager.getCells(); }
+
+    @Override
+    public int getVersion() { return version; }
+
     private void updateCellAndVersion(IPosition position, String value) {
         Cell cell = cellManager.update(position, value, version + 1);
         version++;

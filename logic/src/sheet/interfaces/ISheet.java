@@ -5,6 +5,7 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import position.interfaces.IPosition;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ISheet extends Cloneable {
@@ -16,4 +17,6 @@ public interface ISheet extends Cloneable {
     Map<Integer, Integer> getUpdate2VersionCount();
     CellBasicDetails getCellBasicDetails(IPosition position);
     CellDetails getCellDetails(IPosition position);
+    Map<IPosition, Cell> getCells();
+    int getVersion();
 }

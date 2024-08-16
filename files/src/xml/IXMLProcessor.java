@@ -1,11 +1,11 @@
 package xml;
 
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
 import menu.enums.SheetOption;
 import position.interfaces.IPosition;
 
 public interface IXMLProcessor {
-    UiSheet process(SheetOption choice, String filePath) throws Exception;
+    SheetConfiguration process(SheetOption choice, String filePath) throws Exception;
     void save(String filePath) throws Exception;
     IPosition validatePosition(IPosition position);
 }

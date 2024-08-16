@@ -7,9 +7,10 @@ import cell.dto.CreateCellDto;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLPosition;
 import jaxb.generated.STLSheet;
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
 import position.PositionFactory;
 import position.interfaces.IPosition;
+import sheet.Sheet;
 import sheet.dto.CopySheetDto;
 import sheet.dto.CreateSheetDto;
 
@@ -19,11 +20,11 @@ import java.util.stream.Collectors;
 public final class ExistingSheetFactory extends NewSheetFactory {
 
     @Override
-    protected UiSheet createSheet() {
-        CreateSheetDto createSheetDto = super.xmlSheetToCreateSheetDto(sheet);
-        Map<Integer, Integer> version2Count = listVersionCountToMapVersionCount(sheet.getSTLVersion2Count().getEntry());
-        CopySheetDto copySheetDto = new CopySheetDto(createSheetDto, sheet.getVersion(), version2Count);
-        return new UiSheet(copySheetDto, sheet.getSTLLayout().getSTLSize(), sheet.getSTLLayout());
+    protected SheetConfiguration createSheet() {
+        CreateSheetDto createSheetDto = super.xmlSheetToCreateSheetDto(stlSheet);
+        Map<Integer, Integer> version2Count = listVersionCountToMapVersionCount(stlSheet.getSTLVersion2Count().getEntry());
+        CopySheetDto copySheetDto = new CopySheetDto(createSheetDto, stlSheet.getVersion(), version2Count);
+        return new SheetConfiguration(new Sheet(copySheetDto), stlSheet.getSTLLayout().getSTLSize(), stlSheet.getSTLLayout());
     }
 
     private Map<Integer, Integer> listVersionCountToMapVersionCount(List<STLSheet.STLVersion2Count.Entry> list) {

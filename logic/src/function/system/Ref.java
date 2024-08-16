@@ -1,12 +1,12 @@
 package function.system;
 
 import cell.Cell;
-import cell.observability.Subject;
+import cell.observability.interfaces.ISubject;
 import function.Function;
 import function.enums.NumberOfArgs;
 import position.PositionFactory;
 import position.interfaces.IPosition;
-import sheet.Sheet;
+import sheet.interfaces.ISheet;
 import store.SetContextStore;
 import store.TypedContextStore;
 
@@ -31,14 +31,14 @@ public final class Ref extends Function<Object> {
 
     private Cell validateAndSetObservers(Object arg) {
         Cell referencedCell = argToCell(arg);
-        Subject callingCell = getCallingCell();
+        ISubject callingCell = getCallingCell();
         referencedCell.addObserver(callingCell);
         callingCell.addObservable(referencedCell);
         return referencedCell;
     }
 
-    private Subject getCallingCell() {
-        Subject callingCell = TypedContextStore.getSubjectStore().getContext();
+    private ISubject getCallingCell() {
+        ISubject callingCell = TypedContextStore.getSubjectStore().getContext();
         return Optional.ofNullable(callingCell)
                 .orElseThrow(() -> new IllegalArgumentException("No calling cell context set"));
     }
@@ -60,7 +60,7 @@ public final class Ref extends Function<Object> {
                 .orElseGet(() -> searchInCellsStore(position));
     }
 
-    private Cell searchInSheetStore(Sheet sheet, IPosition toSearch) {
+    private Cell searchInSheetStore(ISheet sheet, IPosition toSearch) {
         sheet.validatePositionOnSheet(toSearch);
         return sheet.getCellByPosition(toSearch);
     }

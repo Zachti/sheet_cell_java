@@ -1,6 +1,5 @@
 package cell.observability.interfaces;
 
-import cell.observability.Subject;
 import position.interfaces.IPosition;
 
 import java.util.Collection;
@@ -11,6 +10,6 @@ public interface IObservabilityHandler<T> {
     void remove(T cell);
     int size();
     Set<IPosition> keySet();
-    Collection<Subject> getValues();
+    Collection<ISubject> getValues();
     void clear();
 }

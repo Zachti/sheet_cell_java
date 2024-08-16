@@ -4,7 +4,8 @@ import cell.Cell;
 import cell.dto.CreateCellDto;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLSheet;
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
+import sheet.Sheet;
 import sheet.dto.CreateSheetDto;
 
 import java.util.LinkedList;
@@ -13,8 +14,8 @@ import java.util.List;
 public class NewSheetFactory extends SheetFactory {
 
     @Override
-    protected UiSheet createSheet () {
-        return new UiSheet(xmlSheetToCreateSheetDto(sheet), sheet.getSTLLayout().getSTLSize() ,sheet.getSTLLayout());
+    protected SheetConfiguration createSheet () {
+        return new SheetConfiguration(new Sheet(xmlSheetToCreateSheetDto(stlSheet)), stlSheet.getSTLLayout().getSTLSize() , stlSheet.getSTLLayout());
     }
 
     private List<Cell> xmlCellsToCells(List<STLCell> stlCells) {
