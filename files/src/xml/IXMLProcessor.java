@@ -1,7 +1,7 @@
 package xml;
 
 import jaxb.dto.SheetConfiguration;
-import menu.enums.SheetOption;
+import common.enums.SheetOption;
 import position.interfaces.IPosition;
 
 public interface IXMLProcessor {

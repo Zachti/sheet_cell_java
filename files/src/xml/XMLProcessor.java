@@ -3,7 +3,7 @@ package xml;
 import jaxb.dto.SheetConfiguration;
 import jaxb.marshal.Marshal;
 import jaxb.uiSheetFactory.SheetFactory;
-import menu.enums.SheetOption;
+import common.enums.SheetOption;
 import position.interfaces.IPosition;
 import xml.dto.PositionDetails;
 

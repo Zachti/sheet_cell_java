@@ -7,7 +7,7 @@ import jakarta.xml.bind.Unmarshaller;
 import jaxb.dto.SheetConfiguration;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLSheet;
-import menu.enums.SheetOption;
+import common.enums.SheetOption;
 import store.SetContextStore;
 
 import java.io.File;
