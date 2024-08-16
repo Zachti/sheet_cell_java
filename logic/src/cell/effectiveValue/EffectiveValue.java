@@ -12,17 +12,8 @@ import static common.utils.ValueParser.parseValue;
 public final class EffectiveValue implements IEffectiveValue {
     private Object effectiveValue;
     private String originalValue;
-    private ITree evaluationTree;
     private CellType type;
     private Cell parent;
-
-    public EffectiveValue(String originalValue, Cell Parent) {
-        this.type = CellType.fromString(originalValue);
-        this.parent = Parent;
-        this.originalValue = originalValue;
-        evaluationTree = createTree();
-        effectiveValue = evaluationTree.evaluate();
-    }
 
     public EffectiveValue(String originalValue, Object effectiveValue, Cell Parent) {
         this.type = CellType.fromString(originalValue);
@@ -35,10 +26,7 @@ public final class EffectiveValue implements IEffectiveValue {
     public String getEffectiveValue() { return parseValue(effectiveValue.toString()); }
 
     @Override
-    public void setEffectiveValue() {
-        evaluationTree = createTree();
-        effectiveValue = evaluationTree.evaluate();
-    }
+    public void setEffectiveValue() { effectiveValue = createTree().evaluate(); }
 
     @Override
     public String getOriginalValue() { return parseValue(originalValue); }
