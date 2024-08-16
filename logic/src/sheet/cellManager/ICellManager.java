@@ -1,4 +1,4 @@
-package sheet.manager;
+package sheet.cellManager;
 
 import cell.Cell;
 import position.interfaces.IPosition;

@@ -10,8 +10,8 @@ import position.interfaces.IPosition;
 import sheet.dto.CopySheetDto;
 import sheet.dto.CreateSheetDto;
 import sheet.interfaces.ISheet;
-import sheet.manager.CellManager;
-import sheet.manager.ICellManager;
+import sheet.cellManager.CellManager;
+import sheet.cellManager.ICellManager;
 import store.TypedContextStore;
 
 import java.time.temporal.ChronoUnit;

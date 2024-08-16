@@ -1,11 +1,11 @@
-package sheet.manager;
+package sheet.cellManager;
 
 import cell.Cell;
 import cell.dto.CellBasicDetails;
 import position.interfaces.IPosition;
 import sheet.builder.SheetBuilder;
-import sheet.manager.dependencyGraph.DependencyGraph;
-import sheet.manager.dependencyGraph.IGraph;
+import sheet.cellManager.dependencyGraph.DependencyGraph;
+import sheet.cellManager.dependencyGraph.IGraph;
 import store.SetContextStore;
 
 import java.util.*;

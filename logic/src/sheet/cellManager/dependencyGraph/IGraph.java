@@ -1,4 +1,4 @@
-package sheet.manager.dependencyGraph;
+package sheet.cellManager.dependencyGraph;
 
 import cell.Cell;
 
