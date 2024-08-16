@@ -17,8 +17,8 @@ public class NewSheetFactory extends SheetFactory {
         return new UiSheet(xmlSheetToCreateSheetDto(sheet), sheet.getSTLLayout().getSTLSize() ,sheet.getSTLLayout());
     }
 
-    private LinkedList<Cell> xmlCellsToCells(List<STLCell> stlCells) {
-        LinkedList<Cell> cells = new LinkedList<>();
+    private List<Cell> xmlCellsToCells(List<STLCell> stlCells) {
+        List<Cell> cells = new LinkedList<>();
         stlCells.forEach(stlCell -> safeCreateCell(stlCell, cells));
         return cells;
     }
@@ -27,13 +27,13 @@ public class NewSheetFactory extends SheetFactory {
         String name = sheet.getName();
         int rows = sheet.getSTLLayout().getRows();
         int cols = sheet.getSTLLayout().getColumns();
-        LinkedList<Cell> cells = xmlCellsToCells(sheet.getSTLCells().getSTLCell());
+        List<Cell> cells = xmlCellsToCells(sheet.getSTLCells().getSTLCell());
         safeExecute(() -> cells.forEach(Cell::setEffectiveValue), cells);
         return new CreateSheetDto(name, rows, cols, cells);
     }
 
     @Override
-    protected void createCell(STLCell stlCell, LinkedList<Cell> cells) {
+    protected void createCell(STLCell stlCell, List<Cell> cells) {
         cells.add(new Cell(stlCellToCreateCellDto(stlCell)));
     }
 

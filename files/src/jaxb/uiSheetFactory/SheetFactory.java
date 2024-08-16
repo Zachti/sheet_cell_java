@@ -12,7 +12,7 @@ import store.SetContextStore;
 
 import java.io.File;
 import java.util.EnumMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class SheetFactory {
@@ -28,9 +28,9 @@ public abstract class SheetFactory {
 
     protected abstract UiSheet createSheet();
 
-    protected abstract void createCell(STLCell stlCell, LinkedList<Cell> cells);
+    protected abstract void createCell(STLCell stlCell, List<Cell> cells);
 
-    protected void safeCreateCell(STLCell stlCell, LinkedList<Cell> cells) {
+    protected void safeCreateCell(STLCell stlCell, List<Cell> cells) {
         safeExecute(() -> createCell(stlCell, cells), cells);
     }
 
@@ -45,7 +45,7 @@ public abstract class SheetFactory {
         ));
     }
 
-    protected void safeExecute(Runnable runnable,  LinkedList<Cell> cells) {
+    protected void safeExecute(Runnable runnable,  List<Cell> cells) {
         SetContextStore.getCellSetStore().setContext(cells);
         runnable.run();
         SetContextStore.getCellSetStore().clearContext();

@@ -36,7 +36,7 @@ public final class ExistingSheetFactory extends NewSheetFactory {
     }
 
     @Override
-    protected void createCell(STLCell stlCell, LinkedList<Cell> cells) {
+    protected void createCell(STLCell stlCell, List<Cell> cells) {
         cells.add(new Cell(stlCellToCopyCellDto(stlCell)));
     }
 
