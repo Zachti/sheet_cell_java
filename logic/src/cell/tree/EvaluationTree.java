@@ -2,7 +2,7 @@ package cell.tree;
 
 import cell.Cell;
 import cell.tree.enums.InputSymbols;
-import cell.tree.interfaces.IHandler;
+import cell.tree.interfaces.ITreeHandler;
 import cell.tree.interfaces.ITree;
 import cell.tree.node.EvaluationNode;
 import cell.tree.node.INode;
@@ -34,7 +34,7 @@ public final class EvaluationTree implements ITree {
         Stack<INode> stack = new Stack<>();
         StringBuilder current = new StringBuilder();
         AtomicReference<INode> root = new AtomicReference<>();
-        Map<InputSymbols, IHandler> char2Handler = new EnumMap<>(Map.of(
+        Map<InputSymbols, ITreeHandler> char2Handler = new EnumMap<>(Map.of(
                 InputSymbols.OPEN_BRACE, _ -> {},
                 InputSymbols.CLOSE_BRACE, curr -> root.set(handleCloseBrace(stack, curr, root.get())),
                 InputSymbols.COMMA, curr -> root.set(handleComma(stack, curr, root.get()))
@@ -52,7 +52,7 @@ public final class EvaluationTree implements ITree {
         return finalizeParsing(stack, root.get(), current);
     }
 
-    private void handleSymbol(IHandler handler, StringBuilder current) {
+    private void handleSymbol(ITreeHandler handler, StringBuilder current) {
         handler.handle(current);
         current.setLength(0);
     }

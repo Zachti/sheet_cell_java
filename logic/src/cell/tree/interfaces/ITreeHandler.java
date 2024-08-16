@@ -1,6 +1,6 @@
 package cell.tree.interfaces;
 
 @FunctionalInterface
-public interface IHandler {
+public interface ITreeHandler {
     void handle(StringBuilder current);
 }
