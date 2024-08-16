@@ -18,12 +18,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Sheet implements ISheet {
+public final class Sheet implements ISheet {
     private final String name;
-    protected int version = 1;
+    private int version = 1;
     private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
-    protected final ICellManager cellManager;
+    private final ICellManager cellManager;
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
@@ -39,34 +39,34 @@ public class Sheet implements ISheet {
     }
 
     @Override
-    public final String getName() { return this.name; }
+    public String getName() { return this.name; }
 
     @Override
-    public final void updateCell(IPosition position, String value) {
+    public void updateCell(IPosition position, String value) {
         executeWithContext(() -> updateCellAndVersion(position, value));
     }
 
     @Override
-    public final Map<IPosition, Cell> getPastVersion(int version) {
+    public Map<IPosition, Cell> getPastVersion(int version) {
         return executeWithContext(() ->
               versionHistoryCache.getOrElseUpdate(version, () -> cellManager.computePastVersion(version)));
     }
 
     @Override
-    public final Map<Integer, Integer> getUpdate2VersionCount() { return version2updateCount; }
+    public Map<Integer, Integer> getUpdate2VersionCount() { return version2updateCount; }
 
     @Override
-    public final CellBasicDetails getCellBasicDetails(IPosition position) {
+    public CellBasicDetails getCellBasicDetails(IPosition position) {
         return cellManager.getCellByPosition(position).getBasicDetails();
     }
 
     @Override
-    public final CellDetails getCellDetails(IPosition position) {
+    public CellDetails getCellDetails(IPosition position) {
         return cellManager.getCellByPosition(position).getDetails();
     }
 
     @Override
-    public final Sheet clone() {
+    public Sheet clone() {
         try {
             Sheet clone = (Sheet) super.clone();
             clone.versionHistoryCache = new Cache<>(500, ChronoUnit.MILLIS);
@@ -78,10 +78,10 @@ public class Sheet implements ISheet {
     }
 
     @Override
-    public final Cell getCellByPosition(IPosition position) { return cellManager.getCellByPosition(position); }
+    public Cell getCellByPosition(IPosition position) { return cellManager.getCellByPosition(position); }
 
     @Override
-    public final void validatePositionOnSheet(IPosition position) { cellManager.validatePositionOnSheet(position); }
+    public void validatePositionOnSheet(IPosition position) { cellManager.validatePositionOnSheet(position); }
 
     @Override
     public Map<IPosition, Cell> getCells() { return cellManager.getCells(); }
