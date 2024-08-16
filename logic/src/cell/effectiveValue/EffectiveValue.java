@@ -15,6 +15,12 @@ public final class EffectiveValue implements IEffectiveValue {
     private CellType type;
     private Cell parent;
 
+    public EffectiveValue(String originalValue, Cell Parent) {
+        this.type = CellType.fromString(originalValue);
+        this.parent = Parent;
+        this.effectiveValue = this.originalValue  = originalValue;
+    }
+
     public EffectiveValue(String originalValue, Object effectiveValue, Cell Parent) {
         this.type = CellType.fromString(originalValue);
         this.parent = Parent;
