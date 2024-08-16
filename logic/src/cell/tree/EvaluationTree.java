@@ -40,7 +40,7 @@ public final class EvaluationTree implements ITree {
                 InputSymbols.COMMA, curr -> root.set(handleComma(stack, curr, root.get()))
         ));
 
-        input.trim().chars()
+        input.chars()
                 .mapToObj(c -> (char) c)
                 .forEach(c -> InputSymbols.fromChar(c)
                         .ifPresentOrElse(
@@ -63,7 +63,7 @@ public final class EvaluationTree implements ITree {
     }
 
     private INode handleComma(Stack<INode> stack, StringBuilder current, INode root) {
-        return Optional.of(current.toString().trim())
+        return Optional.of(current.toString())
                 .filter(s -> !s.isEmpty())
                 .map(this::stringToNode)
                 .map(node -> addChildOrCreateRoot(stack, node, root))
@@ -71,7 +71,7 @@ public final class EvaluationTree implements ITree {
     }
 
     private INode finalizeParsing(Stack<INode> stack, INode root, StringBuilder current) {
-        return Optional.of(current.toString().trim())
+        return Optional.of(current.toString())
                 .filter(s -> !s.isEmpty())
                 .map(this::stringToNode)
                 .map(node -> addChildOrCreateRoot(stack, node, root))
