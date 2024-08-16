@@ -1,9 +1,9 @@
 package xml;
 
+import common.enums.SheetOption;
 import jaxb.dto.SheetConfiguration;
 import jaxb.marshal.Marshal;
 import jaxb.uiSheetFactory.SheetFactory;
-import common.enums.SheetOption;
 import position.interfaces.IPosition;
 import xml.dto.PositionDetails;
 

@@ -1,13 +1,13 @@
 package jaxb.uiSheetFactory;
 
 import cell.Cell;
+import common.enums.SheetOption;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import jaxb.dto.SheetConfiguration;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLSheet;
-import common.enums.SheetOption;
 import store.SetContextStore;
 
 import java.io.File;
