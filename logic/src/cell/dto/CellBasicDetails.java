@@ -2,7 +2,7 @@ package cell.dto;
 
 import position.interfaces.IPosition;
 
-public record CellBasicDetails(IPosition position, Object originalValue, Object effectiveValue) {
+public record CellBasicDetails(IPosition position, String originalValue, Object effectiveValue) {
 
     @Override
     public String toString() {

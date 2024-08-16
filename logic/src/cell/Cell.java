@@ -16,8 +16,8 @@ public final class Cell extends Subject implements ICell {
     private final IPosition position;
 
     public Cell(CreateCellDto createCellDto) {
-        Object originalValue = createCellDto.originalValue();
-        effectiveValue = new EffectiveValue(originalValue, originalValue,this);
+        String originalValue = createCellDto.originalValue();
+        effectiveValue = new EffectiveValue(originalValue, originalValue, this);
         position = createCellDto.getPosition();
         versionHistory = new VersionHistory<>(getBasicDetails(), 1);
     }
@@ -48,7 +48,7 @@ public final class Cell extends Subject implements ICell {
     public String getOriginalValue() { return effectiveValue.getOriginalValue(); }
 
     @Override
-    public void setOriginalValue(Object originalValue) { effectiveValue.setOriginalValue(originalValue); }
+    public void setOriginalValue(String originalValue) { effectiveValue.setOriginalValue(originalValue); }
 
     @Override
     public CellBasicDetails getPastVersion(int version) { return versionHistory.getByVersionOrUnder(version); }
@@ -60,7 +60,7 @@ public final class Cell extends Subject implements ICell {
     public String getEffectiveValue() { return effectiveValue.getEffectiveValue(); }
 
     @Override
-    public void update(Object originalValue) {
+    public void update(String originalValue) {
         try {
             SetContextStore.getSubjectSetStore().setContext(observables.getValues().stream().toList());
             onSubjectUpdate();
@@ -105,6 +105,7 @@ public final class Cell extends Subject implements ICell {
         effectiveValue = new EffectiveValue(details.originalValue(), details.effectiveValue(), this);
     }
 
+    @Override
     public void onSheetInit() {
         observers.clear();
         effectiveValue =  new EffectiveValue(getOriginalValue(), this);

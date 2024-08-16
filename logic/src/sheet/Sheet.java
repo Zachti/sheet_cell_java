@@ -42,7 +42,7 @@ public class Sheet implements ISheet {
     public final String getName() { return this.name; }
 
     @Override
-    public final void updateCell(IPosition position, Object value) {
+    public final void updateCell(IPosition position, String value) {
         executeWithContext(() -> updateCellAndVersion(position, value));
     }
 
@@ -83,7 +83,7 @@ public class Sheet implements ISheet {
     @Override
     public final void validatePositionOnSheet(IPosition position) { cellManager.validatePositionOnSheet(position); }
 
-    private void updateCellAndVersion(IPosition position, Object value) {
+    private void updateCellAndVersion(IPosition position, String value) {
         Cell cell = cellManager.update(position, value, version + 1);
         version++;
         version2updateCount.put(version, cell.getObserversCount() + 1);
