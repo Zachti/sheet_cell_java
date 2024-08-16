@@ -109,7 +109,7 @@ public class CellManager implements ICellManager {
                 .forEach(Cell::revertUpdate);
     }
 
-    public static List<Cell> getInsertionOrderOrNull(List<Cell> cells) {
+    private List<Cell> getInsertionOrderOrNull(List<Cell> cells) {
         return Optional.ofNullable(cells)
                 .map(cellList -> cellList.stream()
                         .collect(Collectors.toMap(
