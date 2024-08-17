@@ -35,7 +35,7 @@ public final class EvaluationNode implements INode {
     @Override
     public Object getNodeValue() {
         return Optional.ofNullable(function)
-                .map(_ -> getArgsAndEvaluate())
+                .map(function -> getArgsAndEvaluate())
                 .orElse(value);
     }
 

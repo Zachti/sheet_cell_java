@@ -29,7 +29,7 @@ public abstract class Operator extends Function<Double> {
         validateOrThrow(
                 operands,
                 ops -> ops != null && (ops.size() != 2 || isValidSecondOperand(ops.getLast())),
-                _ -> this.getClass().getSimpleName() + " by zero"
+                error -> this.getClass().getSimpleName() + " by zero"
         );
     }
 

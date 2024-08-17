@@ -26,6 +26,6 @@ public abstract class Formatter extends Function<String> {
 
     private void validateArgsDefined(List<String> args) {
         Predicate<String> isDefined = arg -> !UNDEFINED.equals(arg);
-        args.forEach(arg -> validateOrThrow(arg, isDefined, _ -> "Argument is undefined"));
+        args.forEach(arg -> validateOrThrow(arg, isDefined, message -> "Argument is undefined"));
     }
 }

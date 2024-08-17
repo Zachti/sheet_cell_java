@@ -32,7 +32,7 @@ public final class Cache<K, V> implements ICache<K, V> { // small in memory LRU 
                 boolean shouldRemove = size() > MAX_SIZE;
                 Optional.of(shouldRemove)
                         .filter(Boolean::booleanValue)
-                        .ifPresent(_ -> evictOldestEntry(eldest));
+                        .ifPresent(evict -> evictOldestEntry(eldest));
                 return shouldRemove;
             }
         };

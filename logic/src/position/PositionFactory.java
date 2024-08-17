@@ -10,7 +10,7 @@ public class PositionFactory {
     public static Position create(int row, char column) {
         String key = row + ":" + column;
 
-        return cachedPositions.computeIfAbsent(key, _ -> new Position(row, column));
+        return cachedPositions.computeIfAbsent(key, value -> new Position(row, column));
     }
 
     private PositionFactory() {}

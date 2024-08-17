@@ -23,7 +23,7 @@ public class DependencyGraph implements IGraph {
 
         Optional.ofNullable(cell.getObservers())
                 .ifPresent(observers -> observers.getValues().forEach(observer -> {
-                    dependencyGraph.computeIfAbsent(cell, _ -> new HashSet<>()).add(observer.getPosition());
+                    dependencyGraph.computeIfAbsent(cell, edge -> new HashSet<>()).add(observer.getPosition());
                     buildGraphRecursive(cell, visited);
                 }));
 

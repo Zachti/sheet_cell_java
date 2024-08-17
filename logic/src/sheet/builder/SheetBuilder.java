@@ -33,7 +33,7 @@ public class SheetBuilder implements IBuilder {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (existing, _) -> existing,
+                        (existing, newValue) -> existing,
                         LinkedHashMap::new));
     }
 
@@ -71,7 +71,7 @@ public class SheetBuilder implements IBuilder {
         validateOrThrow(
                 new int[]{rows, cols},
                 dimensions -> isInRange(dimensions[0], 1, MaxDimensions.MAX_ROWS.getValue()) && isInRange(dimensions[1], 1,  MaxDimensions.MAX_COLS.getValue()),
-                _ -> "Invalid dimensions! Rows must be between 1 and " +  MaxDimensions.MAX_ROWS.getValue() + ", and cols between 1 and " + MaxDimensions.MAX_COLS.getValue()
+                error -> "Invalid dimensions! Rows must be between 1 and " +  MaxDimensions.MAX_ROWS.getValue() + ", and cols between 1 and " + MaxDimensions.MAX_COLS.getValue()
         );
     }
 }

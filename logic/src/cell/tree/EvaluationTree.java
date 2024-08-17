@@ -35,7 +35,7 @@ public final class EvaluationTree implements ITree {
         StringBuilder current = new StringBuilder();
         AtomicReference<INode> root = new AtomicReference<>();
         Map<InputSymbols, ITreeHandler> char2Handler = new EnumMap<>(Map.of(
-                InputSymbols.OPEN_BRACE, _ -> {},
+                InputSymbols.OPEN_BRACE, curr -> {},
                 InputSymbols.CLOSE_BRACE, curr -> root.set(handleCloseBrace(stack, curr, root.get())),
                 InputSymbols.COMMA, curr -> root.set(handleComma(stack, curr, root.get()))
         ));
@@ -59,7 +59,7 @@ public final class EvaluationTree implements ITree {
 
     private INode handleCloseBrace(Stack<INode> stack, StringBuilder current, INode root) {
         INode updatedRoot = handleComma(stack, current, root);
-        return Optional.ofNullable(stack.pop()).filter(_ -> stack.isEmpty()).orElse(updatedRoot);
+        return Optional.ofNullable(stack.pop()).filter(empty -> stack.isEmpty()).orElse(updatedRoot);
     }
 
     private INode handleComma(Stack<INode> stack, StringBuilder current, INode root) {
@@ -107,7 +107,7 @@ public final class EvaluationTree implements ITree {
         try {
             EvaluationTree clone = (EvaluationTree) super.clone();
             clone.treeRoot = treeRoot.clone();
-            Optional.ofNullable(parent).ifPresent(_ -> cloneParentCell(clone));
+            Optional.ofNullable(parent).ifPresent(p -> cloneParentCell(clone));
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new InternalError(e);

@@ -72,7 +72,7 @@ public class CellManager implements ICellManager {
         validateOrThrow(
                 position,
                 position2Cell::containsKey,
-                _ -> "Position not on sheet"
+                error -> "Position not on sheet"
         );
     }
 
@@ -115,7 +115,7 @@ public class CellManager implements ICellManager {
                         .collect(Collectors.toMap(
                                 Cell::getPosition,
                                 Function.identity(),
-                                (existing, _) -> existing,
+                                (existing, newValue) -> existing,
                                 HashMap::new
                         )))
                 .map(cellMap -> new DependencyGraph(cellMap).topologicalSort())

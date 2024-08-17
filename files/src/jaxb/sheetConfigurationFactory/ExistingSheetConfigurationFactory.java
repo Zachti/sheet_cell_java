@@ -32,7 +32,7 @@ public final class ExistingSheetConfigurationFactory extends NewSheetConfigurati
                 .collect(Collectors.toMap(
                         STLSheet.STLVersion2Count.Entry::getKey,
                         STLSheet.STLVersion2Count.Entry::getValue,
-                        (existing, _) -> existing,
+                        (existing, newValue) -> existing,
                         TreeMap::new));
     }
 
@@ -53,7 +53,7 @@ public final class ExistingSheetConfigurationFactory extends NewSheetConfigurati
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (existing, _) -> existing,
+                        (existing, newValue) -> existing,
                         TreeMap::new));
     }
 

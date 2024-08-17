@@ -27,7 +27,7 @@ public abstract class Function<T> implements IFunction {
         validateOrThrow(
                 args,
                 a -> a.size() == getNumberOfArgs() || getNumberOfArgs() == Integer.MAX_VALUE,
-                _ -> "Function requires exactly " + getNumberOfArgs() + " arguments"
+                error -> "Function requires exactly " + getNumberOfArgs() + " arguments"
         );
     }
 }
