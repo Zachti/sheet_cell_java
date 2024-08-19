@@ -6,7 +6,7 @@ logic.iml
 misc.xml
 modules.xml
 vcs.xml
-ui.iml
 shared.iml
 files.iml
 lib/
+ui.iml
