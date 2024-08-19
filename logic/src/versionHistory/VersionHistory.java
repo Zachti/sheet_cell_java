@@ -15,9 +15,9 @@ public final class VersionHistory<T> implements IVersionHistory<T> {
     }
 
     @Override
-    public void copy(Map<Integer, T> version2History) {
+    public void copy(TreeMap<Integer, T> version2History) {
         this.version2History.putAll(version2History);
-        this.currentVersion = version2History.size();
+        this.currentVersion = version2History.lastKey();
     }
 
     @Override
