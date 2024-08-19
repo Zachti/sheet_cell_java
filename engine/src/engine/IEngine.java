@@ -5,7 +5,9 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
+import range.CellRange;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IEngine {
@@ -15,4 +17,8 @@ public interface IEngine {
     void updateCell(UpdateCellDto updateCellDto);
     CellBasicDetails getCellBasicDetails(IPosition position);
     CellDetails getCellDetails(IPosition position);
+    void addRange(CellRange range);
+    void removeRange(CellRange range);
+    List<CellRange> getRanges();
+    List<Cell> viewCellsInRange(CellRange range);
 }

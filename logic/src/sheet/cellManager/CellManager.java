@@ -3,6 +3,7 @@ package sheet.cellManager;
 import cell.Cell;
 import cell.dto.CellBasicDetails;
 import position.interfaces.IPosition;
+import range.CellRange;
 import sheet.builder.SheetBuilder;
 import sheet.cellManager.dependencyGraph.DependencyGraph;
 import sheet.cellManager.dependencyGraph.IGraph;
@@ -78,6 +79,14 @@ public class CellManager implements ICellManager {
 
     @Override
     public Map<IPosition, Cell> getCells() { return position2Cell; }
+
+    @Override
+    public List<Cell> getCellsInRange(CellRange range) {
+        return position2Cell.entrySet().stream()
+                .filter(entry -> range.contains(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
 
     private Map<IPosition, Cell> historicDetailsToHistoricPosition2Cell(Map<IPosition, CellBasicDetails> historicPosition2Cell) {
         Map<IPosition, Cell> position2Cell = new HashMap<>();

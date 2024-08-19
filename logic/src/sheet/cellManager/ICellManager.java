@@ -2,6 +2,7 @@ package sheet.cellManager;
 
 import cell.Cell;
 import position.interfaces.IPosition;
+import range.CellRange;
 
 import java.util.List;
 import java.util.Map;
@@ -13,4 +14,5 @@ public interface ICellManager {
     Cell getCellByPosition(IPosition position);
     void validatePositionOnSheet(IPosition position);
     Map<IPosition, Cell> getCells();
+    List<Cell> getCellsInRange(CellRange range);
 }

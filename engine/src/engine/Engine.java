@@ -6,8 +6,10 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import engine.semaphore.ISemaphoreTask;
 import position.interfaces.IPosition;
+import range.CellRange;
 import sheet.interfaces.ISheet;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
@@ -40,6 +42,18 @@ public final class Engine implements IEngine {
     public CellDetails getCellDetails(IPosition position) {
         return safeExecute(() -> sheet.getCellDetails(position));
     }
+
+    @Override
+    public void addRange(CellRange range) { safeExecute(() -> { sheet.addRange(range); return null; }); }
+
+    @Override
+    public void removeRange(CellRange range) { safeExecute(() -> { sheet.removeRange(range); return null; }); }
+
+    @Override
+    public List<CellRange> getRanges() { return safeExecute(sheet::getRanges); }
+
+    @Override
+    public List<Cell> viewCellsInRange(CellRange range) { return safeExecute(() -> sheet.viewCellsInRange(range)); }
 
     private <T> T safeExecute(ISemaphoreTask<T> task) {
         try {
