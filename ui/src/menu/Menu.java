@@ -88,14 +88,8 @@ public final class Menu implements IMenu {
     @Override
     public int getHistoricVersion(Map<Integer, Integer> version2updateCount) {
         new VersionsDrawer(version2updateCount).draw();
-        try {
-            System.out.println("Please enter historic version: ");
-            return getValidIntOrThrow(version2updateCount.keySet());
-        } catch (Exception e) {
-            pleaseTryAgain(e, "Invalid historic version, please try again.");
-            return getHistoricVersion(version2updateCount);
-        }
-
+        System.out.println("Please enter historic version: ");
+        return getValidIntOrThrow(version2updateCount.keySet());
     }
 
     @Override

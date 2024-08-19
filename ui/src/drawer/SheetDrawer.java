@@ -4,6 +4,7 @@ import cell.Cell;
 import jaxb.generated.STLSize;
 import position.PositionFactory;
 import position.interfaces.IPosition;
+import store.SetContextStore;
 
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -36,7 +37,9 @@ public final class SheetDrawer extends Drawer {
     @Override
     public void draw() {
         drawTopLettersRow();
+        SetContextStore.getCellSetStore().setContext(position2Cell.values().stream().toList());
         IntStream.range(1, numberOfRows + 1).forEach(this::drawRow);
+        SetContextStore.getCellSetStore().clearContext();
         display(EMPTY_LINE);
     }
 
@@ -86,6 +89,7 @@ public final class SheetDrawer extends Drawer {
 //                .max(Integer::compareTo)
 //                .orElse(0);
     // todo - ask if can be implemented
+
 //    }
 
 
