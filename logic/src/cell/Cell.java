@@ -108,6 +108,7 @@ public final class Cell extends Subject implements ICell {
     public void onSheetInit() {
         observers.clear();
         setEffectiveValue();
+        versionHistory.addNewVersion(getBasicDetails(), versionHistory.getCurrentVersion());
     }
 
     public static Cell fromBasicDetails(CellBasicDetails details) { return new Cell(details); }
