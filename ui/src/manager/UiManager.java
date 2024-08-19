@@ -1,6 +1,5 @@
 package manager;
 
-import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
@@ -8,18 +7,17 @@ import common.interfaces.IHandler;
 import drawer.SheetDrawer;
 import engine.Engine;
 import engine.IEngine;
-import jaxb.generated.UiSheet;
-import jaxb.generated.UiUnits;
-import menu.IMenu;
+import jaxb.dto.SheetConfiguration;
 import menu.Menu;
 import menu.enums.MenuAction;
+import menu.interfaces.IMenu;
 import position.interfaces.IPosition;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class UiManager implements IUIManager{
+public final class UiManager implements IUiManager {
     private IMenu menu;
     private IEngine engine;
     private SheetDrawer sheetDrawer;
@@ -50,11 +48,11 @@ public final class UiManager implements IUIManager{
     }
 
     private void loadSheet() {
-        UiSheet sheet = menu.getSheet();
-        engine = new Engine(sheet);
-        int rows = sheet.getLayout().getRows();
-        int cols = sheet.getLayout().getColumns();
-        sheetDrawer = new SheetDrawer(new UiUnits(sheet.getUiUnits()), rows, cols, sheet.getCells());
+        SheetConfiguration configuration = menu.getSheet();
+        engine = new Engine(configuration.sheet());
+        int rows = configuration.layout().getRows();
+        int cols = configuration.layout().getColumns();
+        sheetDrawer = new SheetDrawer(configuration.uiUnits(), rows, cols, configuration.sheet().getCells());
     }
 
     private void handleLoadSheet() {
@@ -81,14 +79,13 @@ public final class UiManager implements IUIManager{
     }
 
     private void handleShowHistoricSheetVersions() {
-        Map<Integer, Integer> version2updateCount = this.engine.getUpdateCountList();
+        Map<Integer, Integer> version2updateCount = engine.getUpdateCountList();
         int version = menu.getHistoricVersion(version2updateCount);
-        Map<IPosition, Cell> historicPosition2Cell = engine.getHistory(version);
-        new SheetDrawer(this.sheetDrawer, historicPosition2Cell).draw();
+        sheetDrawer.drawHistory(engine.getHistory(version));
     }
 
     private void updateCel(IPosition position) {
-        Object newValue = menu.getCellNewValue();
+        String newValue = menu.getCellNewValue();
         engine.updateCell(new UpdateCellDto(position, newValue));
     }
 
@@ -107,7 +104,7 @@ public final class UiManager implements IUIManager{
     private void getReChoiceStrategy(String choice, IHandler handler){
         Optional.ofNullable(choice)
                 .filter("y"::equalsIgnoreCase)
-                .ifPresentOrElse(_ -> handleMenuAction(handler), this::handleMainMenu);
+                .ifPresentOrElse(handle -> handleMenuAction(handler), this::handleMainMenu);
     }
 
     private void handleMainMenu() {
