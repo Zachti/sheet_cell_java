@@ -1,5 +1,5 @@
 package manager;
 
-interface IUIManager {
+interface IUiManager {
     void run();
 }

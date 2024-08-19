@@ -2,10 +2,12 @@ package menu;
 
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
+import common.enums.SheetOption;
+import common.interfaces.IDescribable;
 import drawer.VersionsDrawer;
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
 import menu.enums.MenuAction;
-import menu.enums.SheetOption;
+import menu.interfaces.IMenu;
 import position.Position;
 import position.interfaces.IPosition;
 import xml.IXMLProcessor;
@@ -35,14 +37,14 @@ public final class Menu implements IMenu {
     }
 
     @Override
-    public UiSheet getSheet() {
+    public SheetConfiguration getSheet() {
         try {
             SheetOption choice = enumMenuToEnumChoice(SheetOption.class, "Please select an option to load a sheet:", SheetOption.size());
             String filePath =  getFilePath();
             validateFileExists(filePath);
-            return xmlProcessor.process(choice, filePath);
+            return xmlProcessor.parse(choice, filePath);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("The file content is invalid. Please provide a valid existing sheet content file.");
             System.out.println("Please try again.");
             return getSheet();
         }
@@ -59,9 +61,9 @@ public final class Menu implements IMenu {
     }
 
     @Override
-    public Object getCellNewValue() {
+    public String getCellNewValue() {
         System.out.println("Please enter new value: ");
-        return scanner.nextLine();
+        return scanner.nextLine().trim();
     }
 
     @Override
@@ -78,7 +80,7 @@ public final class Menu implements IMenu {
     public void close() {
         Optional.of(isUserWantsToSave())
                 .filter(Boolean::booleanValue)
-                .ifPresent(_ -> saveSheet(getFilePath()));
+                .ifPresent(save -> saveSheet(getFilePath()));
         scanner.close();
         System.exit(0);
     }
@@ -105,7 +107,7 @@ public final class Menu implements IMenu {
         close();
     }
 
-    private <T extends IMenuEnum> void enumToMenu(Class<T> enumClass, String openMessage) {
+    private <T extends IDescribable> void enumToMenu(Class<T> enumClass, String openMessage) {
         String menu = Stream.concat(
                         (openMessage != null) ? Stream.of(openMessage) : Stream.empty(),
                         IntStream.range(0, enumClass.getEnumConstants().length)
@@ -116,7 +118,7 @@ public final class Menu implements IMenu {
         System.out.println(menu);
     }
 
-    private <T extends IMenuEnum> int enumMenuToIntChoiceWithValidation(Class<T> enumClass, String message, int max) {
+    private <T extends IDescribable> int enumMenuToIntChoiceWithValidation(Class<T> enumClass, String message, int max) {
         try {
             enumToMenu(enumClass, message);
             return getValidInteger(max);
@@ -126,7 +128,7 @@ public final class Menu implements IMenu {
         }
     }
 
-    private <T extends IMenuEnum> T enumMenuToEnumChoice(Class<T> enumClass, String message, int max) {
+    private <T extends IDescribable> T enumMenuToEnumChoice(Class<T> enumClass, String message, int max) {
         return enumClass.getEnumConstants()[enumMenuToIntChoiceWithValidation(enumClass, message, max) - 1];
     }
 
@@ -149,7 +151,7 @@ public final class Menu implements IMenu {
             xmlProcessor.save(filePath);
             System.out.println("\nSheet saved successfully.\n");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("An error occurred while saving the sheet.");
         }
     }
 

@@ -1,7 +1,7 @@
 package drawer;
 
 import cell.Cell;
-import jaxb.generated.UiUnits;
+import jaxb.generated.STLSize;
 import position.PositionFactory;
 import position.interfaces.IPosition;
 
@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 import static sheet.builder.SheetBuilder.intColToCharCol;
 
 public final class SheetDrawer extends Drawer {
-    private final UiUnits uiUnits;
+    private final STLSize uiUnits;
     private final int numberOfRows;
     private final int numberOfColumns;
     private final Map<IPosition, Cell> position2Cell;
@@ -19,10 +19,9 @@ public final class SheetDrawer extends Drawer {
     private final static String SHORT_END_OF_LINE = "|";
     private final static String EMPTY_LINE = "";
 
-    public SheetDrawer(UiUnits uiUnits, int numberOfRows, int numberOfColumns, Map<IPosition, Cell> position2Cell) {
+    public SheetDrawer(STLSize uiUnits, int numberOfRows, int numberOfColumns, Map<IPosition, Cell> position2Cell) {
         this.position2Cell = position2Cell;
         this.uiUnits = uiUnits;
-        this.uiUnits.addToColumnWidthUnits(calculateMaxCellValueLength());
         this.numberOfRows = numberOfRows;
         this.numberOfColumns = numberOfColumns;
     }
@@ -39,6 +38,10 @@ public final class SheetDrawer extends Drawer {
         drawTopLettersRow();
         IntStream.range(1, numberOfRows + 1).forEach(this::drawRow);
         display(EMPTY_LINE);
+    }
+
+    public void drawHistory(Map<IPosition, Cell> historicPosition2Cell) {
+        new SheetDrawer(this, historicPosition2Cell).draw();
     }
 
     private void drawTopLettersRow() {
@@ -76,13 +79,15 @@ public final class SheetDrawer extends Drawer {
         return cell.getEffectiveValue();
     }
 
-    private int calculateMaxCellValueLength() {
-        return position2Cell.values().stream()
-                .map(Cell::getEffectiveValue)
-                .map(String::length)
-                .max(Integer::compareTo)
-                .orElse(0);
-    }
+//    private int calculateMaxCellValueLength() {
+//        return position2Cell.values().stream()
+//                .map(Cell::getEffectiveValue)
+//                .map(String::length)
+//                .max(Integer::compareTo)
+//                .orElse(0);
+    // todo - ask if can be implemented
+//    }
+
 
     private String getRowIndexStrategy(int rowIndex) {
         return rowIndex + (rowIndex > 9 ? SHORT_END_OF_LINE : END_OF_LINE);

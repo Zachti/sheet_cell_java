@@ -1,8 +1,8 @@
-package menu;
+package menu.interfaces;
 
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
-import jaxb.generated.UiSheet;
+import jaxb.dto.SheetConfiguration;
 import menu.enums.MenuAction;
 import position.interfaces.IPosition;
 
@@ -11,10 +11,10 @@ import java.util.Map;
 
 public interface IMenu extends Closeable {
     MenuAction showMainMenu();
-    UiSheet getSheet();
+    SheetConfiguration getSheet();
     IPosition getCellPosition();
     void printCellBasicDetails(CellBasicDetails details);
-    Object getCellNewValue();
+    String getCellNewValue();
     void pleaseTryAgain(Exception e, String message);
     void printCellDetails(CellDetails details);
     int getHistoricVersion(Map<Integer, Integer> version2updateCount);

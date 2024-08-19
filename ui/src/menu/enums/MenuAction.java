@@ -1,8 +1,8 @@
 package menu.enums;
 
-import menu.IMenuEnum;
+import common.interfaces.IDescribable;
 
-public enum MenuAction implements IMenuEnum {
+public enum MenuAction implements IDescribable {
     LOAD("Load a sheet"),
     SHOW_SHEET("Print the sheet"),
     SHOW_CELL("print single cell details"),
