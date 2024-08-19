@@ -29,7 +29,10 @@ public final class EffectiveValue implements IEffectiveValue {
     }
 
     @Override
-    public String getEffectiveValue() { return parseValue(effectiveValue.toString()); }
+    public String getEffectiveValue() {
+        setEffectiveValue();
+        return parseValue(effectiveValue.toString());
+    }
 
     @Override
     public void setEffectiveValue() { effectiveValue = createTree().evaluate(); }
