@@ -3,8 +3,8 @@ package function.Math;
 import function.Function;
 
 import java.util.List;
+import java.util.Optional;
 
-import static common.utils.InputValidation.validateOrThrow;
 import static java.lang.Double.NaN;
 
 public abstract class Operator extends Function<Double> {
@@ -14,7 +14,7 @@ public abstract class Operator extends Function<Double> {
         try {
             List<Double> operands = parse(args);
             return calc(operands);
-        } catch (Exception e) {
+        } catch (ArithmeticException e) {
             return NaN;
         }
     }
@@ -26,11 +26,11 @@ public abstract class Operator extends Function<Double> {
     }
 
     protected void validateSecondOperand(List<Double> operands) {
-        validateOrThrow(
-                operands,
-                ops -> ops != null && (ops.size() != 2 || isValidSecondOperand(ops.getLast())),
-                error -> this.getClass().getSimpleName() + " by zero"
-        );
+        Optional.of(operands)
+                .filter(ops -> ops.size() == 2)
+                .map(ops -> ops.get(1))
+                .filter(this::isValidSecondOperand)
+                .orElseThrow(() -> new ArithmeticException(this.getClass().getSimpleName() + " by zero"));
     }
 
     protected List<Double> argsToDoubleArray(List<Object> args) {
