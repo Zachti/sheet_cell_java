@@ -1,9 +1,6 @@
 package common.thread.job;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class JobQueue {
     private final ThreadPoolExecutor executor;
@@ -14,7 +11,7 @@ public class JobQueue {
         registerShutdownHook();
     }
 
-    public void addJob(IJob job) { executor.execute(job); }
+    public <T> Future<T> addJob(Callable<T> job) { return executor.submit(job); }
 
     public void shutdown() {
         executor.shutdown();

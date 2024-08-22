@@ -4,8 +4,8 @@ import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
-import engine.semaphore.ISemaphoreTask;
-import engine.semaphore.SemaphoreTask;
+import common.thread.job.IJob;
+import common.thread.job.JobQueue;
 import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
 import range.CellRange;
@@ -13,108 +13,110 @@ import filter.dto.FilterConfig;
 import sheet.dto.SortConfig;
 import sheet.interfaces.ISheet;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 public final class Engine implements IEngine {
-    private final ISheet sheet;
-    private final Semaphore semaphore = new Semaphore(1);
+    private final static int MAX_CONCURRENT_JOBS = 10;
+    private final static int MAX_QUEUE_SIZE = 20;
+    private final List<ISheet> sheets = new LinkedList<>();
+    private final JobQueue jobQueue = new JobQueue(MAX_CONCURRENT_JOBS, MAX_QUEUE_SIZE);
 
-    public Engine(ISheet sheet) {
-        this.sheet = sheet;
+    @Override
+    public UUID addSheet(ISheet sheet) {
+        UUID id = UUID.randomUUID();
+        this.sheets.add(sheet.onListInsert(id));
+        return id;
     }
 
     @Override
-    public void updateCell(UpdateCellDto updateCellDto) {
-        safeExecute(() -> {
-            sheet.updateCell(updateCellDto);
+    public void removeSheet(UUID id) { this.sheets.remove(getSheetById(id)); }
+
+    @Override
+    public Future<Void> updateCell(UpdateCellDto updateCellDto, UUID id) {
+        return addVoidJobToQueue(() -> getSheetById(id).updateCell(updateCellDto));
+    }
+
+    @Override
+    public Future<Map<IPosition, Cell>> getHistory(int version, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).getPastVersion(version));
+    }
+
+    @Override
+    public Future<Map<Integer, Integer>> getUpdateCountList(UUID id) { return addJobToQueue(getSheetById(id)::getUpdate2VersionCount); }
+
+    @Override
+    public Future<String> getSheetName(UUID id) {
+        return addJobToQueue(getSheetById(id)::getName);
+    }
+
+    @Override
+    public Future<CellBasicDetails> getCellBasicDetails(IPosition position, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).getCellBasicDetails(position));
+    }
+
+    @Override
+    public Future<CellDetails> getCellDetails(IPosition position, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).getCellDetails(position));
+    }
+
+    @Override
+    public Future<Void> addRange(CellRange range, UUID id) {
+        return addVoidJobToQueue(() -> getSheetById(id).addRange(range));
+    }
+
+    @Override
+    public Future<Void> removeRange(CellRange range, UUID id) {
+        return addVoidJobToQueue(() -> getSheetById(id).removeRange(range));
+    }
+
+    @Override
+    public Future<List<CellRange>> getRanges(UUID id) {
+        return addJobToQueue(getSheetById(id)::getRanges);
+    }
+
+    @Override
+    public Future<List<Cell>> viewCellsInRange(CellRange range, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).viewCellsInRange(range));
+    }
+
+    @Override
+    public Future<List<Integer>> getRowsByFilter(FilterConfig filterConfig, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).getRowsByFilter(filterConfig.range(), filterConfig.selectedValues()));
+    }
+
+    @Override
+    public Future<List<Integer>> sortRowsInRange(SortConfig sortConfig, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).sortRowsInRange(sortConfig.range(), sortConfig.columns(), sortConfig.ascending()));
+    }
+
+    @Override
+    public Future<Map<IPosition, Cell>> getWhatIfCells(List<UpdateCellDto> updateCellDtos, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).getWhatIfCells(updateCellDtos));
+    }
+
+    @Override
+    public Future<List<Integer>> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig, UUID id) {
+        return addJobToQueue(() -> getSheetById(id).getRowsByMultiColumnsFilter(filterConfig.range(), filterConfig.selectedValues(), filterConfig.isAnd()));
+    }
+
+    private <T> Future<T> addJobToQueue(Callable<T> job) {
+        return jobQueue.addJob(job);
+    }
+
+    private Future<Void> addVoidJobToQueue(IJob job) {
+        return addJobToQueue(() -> {
+            job.execute();
             return null;
         });
     }
 
-    @Override
-    public Map<IPosition, Cell> getHistory(int version) {
-        return safeExecute(() -> sheet.getPastVersion(version));
-    }
-
-    @Override
-    public Map<Integer, Integer> getUpdateCountList() { return safeExecute(sheet::getUpdate2VersionCount); }
-
-    @Override
-    public String getSheetName() {
-        return safeExecute(sheet::getName);
-    }
-
-    @Override
-    public CellBasicDetails getCellBasicDetails(IPosition position) {
-        return safeExecute(() -> sheet.getCellBasicDetails(position));
-    }
-
-    @Override
-    public CellDetails getCellDetails(IPosition position) {
-        return safeExecute(() -> sheet.getCellDetails(position));
-    }
-
-    @Override
-    public void addRange(CellRange range) {
-        safeVoidExecute(() -> sheet.addRange(range));
-    }
-
-    @Override
-    public void removeRange(CellRange range) {
-        safeVoidExecute(() -> sheet.removeRange(range));
-    }
-
-    @Override
-    public List<CellRange> getRanges() {
-        return safeExecute(sheet::getRanges);
-    }
-
-    @Override
-    public List<Cell> viewCellsInRange(CellRange range) {
-        return safeExecute(() -> sheet.viewCellsInRange(range));
-    }
-
-    @Override
-    public List<Integer> getRowsByFilter(FilterConfig filterConfig) {
-        return safeExecute(() -> sheet.getRowsByFilter(filterConfig.range(), filterConfig.selectedValues()));
-    }
-
-    @Override
-    public List<Integer> sortRowsInRange(SortConfig sortConfig) {
-        return safeExecute(() -> sheet.sortRowsInRange(sortConfig.range(), sortConfig.columns(), sortConfig.ascending()));
-    }
-
-    @Override
-    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
-        return safeExecute(() -> sheet.getWhatIfCells(updateCellDtos));
-    }
-
-    @Override
-    public List<Integer> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig) {
-        return safeExecute(() -> sheet.getRowsByMultiColumnsFilter(filterConfig.range(), filterConfig.selectedValues(), filterConfig.isAnd()));
-    }
-
-    private <T> T safeExecute(ISemaphoreTask<T> task) {
-        try {
-            semaphore.acquire();
-            return task.execute();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Thread was interrupted", e);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        } finally {
-            semaphore.release();
-        }
-    }
-
-    private void safeVoidExecute(SemaphoreTask task) {
-        safeExecute(() -> {
-            task.execute();
-            return null;
-        });
+    private ISheet getSheetById(UUID id) {
+        return sheets.stream().filter(sheet -> sheet.getId().equals(id)).findFirst().orElseThrow();
     }
 }
 

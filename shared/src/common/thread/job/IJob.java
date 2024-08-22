@@ -1,6 +1,6 @@
 package common.thread.job;
 
-public interface IJob extends Runnable {
+@FunctionalInterface
+public interface IJob {
     void execute();
 }
-

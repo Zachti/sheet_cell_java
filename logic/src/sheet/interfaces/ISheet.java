@@ -9,6 +9,7 @@ import range.CellRange;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public interface ISheet extends Cloneable {
     void updateCell(UpdateCellDto updateCellDto);
@@ -29,5 +30,7 @@ public interface ISheet extends Cloneable {
     List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
     List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd);
+    ISheet onListInsert(UUID id);
+    UUID getId();
 }
 

@@ -1,6 +1,8 @@
 package common.interfaces;
 
+import java.util.concurrent.ExecutionException;
+
 @FunctionalInterface
 public interface IHandler {
-    void handle();
+    void handle() throws ExecutionException, InterruptedException;
 }

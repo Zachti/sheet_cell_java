@@ -17,18 +17,19 @@ import sheet.cellManager.ICellManager;
 import store.TypedContextStore;
 
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public final class Sheet implements ISheet {
+    private UUID id;
     private final String name;
     private int version = 1;
     private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
     private final ICellManager cellManager;
     private final List<CellRange> ranges = new LinkedList<>();
+    private final ReadWriteLock rwl = new ReentrantReadWriteLock();
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
@@ -48,26 +49,26 @@ public final class Sheet implements ISheet {
 
     @Override
     public void updateCell(UpdateCellDto updateCellDto) {
-        executeWithContext(() -> updateCellAndVersion(updateCellDto));
+        safeWrite(() -> updateCellAndVersion(updateCellDto));
     }
 
     @Override
     public Map<IPosition, Cell> getPastVersion(int version) {
-        return executeWithContext(() ->
+        return safeRead(() ->
               versionHistoryCache.getOrElseUpdate(version, () -> cellManager.computePastVersion(version)));
     }
 
     @Override
-    public Map<Integer, Integer> getUpdate2VersionCount() { return version2updateCount; }
+    public Map<Integer, Integer> getUpdate2VersionCount() { return safeRead(() -> version2updateCount); }
 
     @Override
     public CellBasicDetails getCellBasicDetails(IPosition position) {
-        return cellManager.getCellByPosition(position).getBasicDetails();
+        return safeRead(() -> cellManager.getCellByPosition(position).getBasicDetails());
     }
 
     @Override
     public CellDetails getCellDetails(IPosition position) {
-        return cellManager.getCellByPosition(position).getDetails();
+        return safeRead(() -> cellManager.getCellByPosition(position).getDetails());
     }
 
     @Override
@@ -89,42 +90,51 @@ public final class Sheet implements ISheet {
     public void validatePositionOnSheet(IPosition position) { cellManager.validatePositionOnSheet(position); }
 
     @Override
-    public Map<IPosition, Cell> getCells() { return cellManager.getCells(); }
+    public Map<IPosition, Cell> getCells() { return safeRead(cellManager::getCells); }
 
     @Override
-    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) { return cellManager.getWhatIfCells(updateCellDtos); }
+    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) { return safeRead(() -> cellManager.getWhatIfCells(updateCellDtos)); }
 
     @Override
     public int getVersion() { return version; }
 
     @Override
-    public void addRange(CellRange range) { ranges.add(range); }
+    public void addRange(CellRange range) { safeWrite(()-> ranges.add(range)); }
 
     @Override
-    public List<CellRange> getRanges() { return ranges; }
+    public List<CellRange> getRanges() { return safeRead(() -> ranges); }
 
     @Override
-    public void removeRange(CellRange range) { ranges.remove(range); }
+    public void removeRange(CellRange range) { safeWrite(() -> ranges.remove(range)); }
 
     @Override
     public List<Cell> viewCellsInRange(CellRange range) {
-        return executeWithContext(() -> cellManager.getCellsInRange(range));
+        return safeRead(() -> cellManager.getCellsInRange(range));
     }
 
     @Override
     public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
-        return executeWithContext(() -> cellManager.getRowsByFilter(range, selectedValues));
+        return safeRead(() -> cellManager.getRowsByFilter(range, selectedValues));
     }
 
     @Override
     public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
-        return executeWithContext(() -> cellManager.sortRowsInRange(range, columns, ascending));
+        return safeRead(() -> cellManager.sortRowsInRange(range, columns, ascending));
     }
 
     @Override
     public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd) {
-        return executeWithContext(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
+        return safeRead(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
     }
+
+    @Override
+    public ISheet onListInsert(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public UUID getId() { return id; }
 
     private void updateCellAndVersion(UpdateCellDto updateCellDto) {
         Cell cell = cellManager.update(updateCellDto, version + 1);
@@ -146,5 +156,27 @@ public final class Sheet implements ISheet {
             action.run();
             return null;
         });
+    }
+
+    private <T> T safeRead(IGenericHandler<T> handler) {
+        try {
+            rwl.readLock().lock();
+            return executeWithContext(handler);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        } finally {
+            rwl.readLock().unlock();
+        }
+    }
+
+    private void safeWrite(Runnable action) {
+        try {
+            rwl.writeLock().lock();
+            executeWithContext(action);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        } finally {
+            rwl.writeLock().unlock();
+        }
     }
 }

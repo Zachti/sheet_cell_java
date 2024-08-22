@@ -16,8 +16,11 @@ import position.interfaces.IPosition;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public final class UiManager implements IUiManager {
+    private UUID id;
     private IMenu menu;
     private IEngine engine;
     private SheetDrawer sheetDrawer;
@@ -49,44 +52,45 @@ public final class UiManager implements IUiManager {
 
     private void loadSheet() {
         SheetConfiguration configuration = menu.getSheet();
-        engine = new Engine(configuration.sheet());
+        engine = new Engine();
+        id = engine.addSheet(configuration.sheet());
         int rows = configuration.layout().getRows();
         int cols = configuration.layout().getColumns();
         sheetDrawer = new SheetDrawer(configuration.uiUnits(), rows, cols, configuration.sheet().getCells());
     }
 
-    private void handleLoadSheet() {
+    private void handleLoadSheet() throws ExecutionException, InterruptedException {
         loadSheet();
         handleShowSheet();
     }
 
-    private void handleShowSheet() {
-        String sheetName = engine.getSheetName();
+    private void handleShowSheet() throws ExecutionException, InterruptedException {
+        String sheetName = engine.getSheetName(id).get();
         sheetDrawer.draw(sheetName);
     }
 
-    private void handleShowCell() {
+    private void handleShowCell() throws ExecutionException, InterruptedException {
         IPosition position = menu.getCellPosition();
-        CellDetails details = engine.getCellDetails(position);
+        CellDetails details = engine.getCellDetails(position, id).get();
         menu.printCellDetails(details);
     }
 
-    private void handleUpdateCell() {
+    private void handleUpdateCell() throws ExecutionException, InterruptedException {
         IPosition position = menu.getCellPosition();
-        CellBasicDetails cell = engine.getCellBasicDetails(position);
+        CellBasicDetails cell = engine.getCellBasicDetails(position, id).get();
         menu.printCellBasicDetails(cell);
         updateCel(position);
     }
 
-    private void handleShowHistoricSheetVersions() {
-        Map<Integer, Integer> version2updateCount = engine.getUpdateCountList();
+    private void handleShowHistoricSheetVersions() throws ExecutionException, InterruptedException {
+        Map<Integer, Integer> version2updateCount = engine.getUpdateCountList(id).get();
         int version = menu.getHistoricVersion(version2updateCount);
-        sheetDrawer.drawHistory(engine.getHistory(version));
+        sheetDrawer.drawHistory(engine.getHistory(version, id).get());
     }
 
     private void updateCel(IPosition position) {
         String newValue = menu.getCellNewValue();
-        engine.updateCell(new UpdateCellDto(position, newValue));
+        engine.updateCell(new UpdateCellDto(position, newValue), id);
     }
 
     private void handleMenuAction(IHandler handler) {
