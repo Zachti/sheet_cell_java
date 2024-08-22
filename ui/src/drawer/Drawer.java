@@ -15,7 +15,7 @@ public abstract class Drawer implements IDrawer{
         int spaces = length - value.length();
         int padLeft = spaces / 2;
         int padRight = spaces - padLeft;
-        return String.format("%" + (padLeft + value.length()) + "s", value).concat(" ".repeat(padRight));
+        return String.format("%" + (padLeft + value.length()) + "s", value).concat(" ".repeat(Math.max(padRight, 0)));
     }
 
     protected void display(String text) { System.out.println(text); }

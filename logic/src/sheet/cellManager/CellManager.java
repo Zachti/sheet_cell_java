@@ -2,7 +2,9 @@ package sheet.cellManager;
 
 import cell.Cell;
 import cell.dto.CellBasicDetails;
+import comparator.RowComparator;
 import position.interfaces.IPosition;
+import range.CellRange;
 import sheet.builder.SheetBuilder;
 import sheet.cellManager.dependencyGraph.DependencyGraph;
 import sheet.cellManager.dependencyGraph.IGraph;
@@ -86,6 +88,29 @@ public class CellManager implements ICellManager {
     public Map<IPosition, Cell> getCells() { return position2Cell; }
 
     @Override
+    public List<Cell> getCellsInRange(CellRange range) {
+        return position2Cell.entrySet().stream()
+                .filter(entry -> range.contains(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
+        return getCellsInRange(range).stream()
+                .filter(cell -> selectedValues.contains(cell.getEffectiveValue()))
+                .map(cell -> cell.getPosition().row())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+        return getCellsInRange(range).stream()
+                .map(cell -> cell.getPosition().row())
+                .sorted(new RowComparator(columns, ascending))
+                .collect(Collectors.toList());
+
+    @Override  
     public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
         Map<IPosition, Cell> whatIfCells = new HashMap<>(position2Cell);
         CellManager whatIfManager = new CellManager(whatIfCells);

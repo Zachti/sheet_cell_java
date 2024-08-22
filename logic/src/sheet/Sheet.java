@@ -7,6 +7,7 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import common.interfaces.IGenericHandler;
 import position.interfaces.IPosition;
+import range.CellRange;
 import sheet.dto.CopySheetDto;
 import sheet.dto.CreateSheetDto;
 import sheet.interfaces.ISheet;
@@ -16,6 +17,8 @@ import store.TypedContextStore;
 
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public final class Sheet implements ISheet {
@@ -24,6 +27,7 @@ public final class Sheet implements ISheet {
     private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
     private final ICellManager cellManager;
+    private final List<CellRange> ranges = new LinkedList<>();
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
@@ -92,6 +96,30 @@ public final class Sheet implements ISheet {
     @Override
     public int getVersion() { return version; }
 
+    @Override
+    public void addRange(CellRange range) { ranges.add(range); }
+
+    @Override
+    public List<CellRange> getRanges() { return ranges; }
+
+    @Override
+    public void removeRange(CellRange range) { ranges.remove(range); }
+
+    @Override
+    public List<Cell> viewCellsInRange(CellRange range) {
+        return executeWithContext(() -> cellManager.getCellsInRange(range));
+    }
+
+    @Override
+    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
+        return executeWithContext(() -> cellManager.getRowsByFilter(range, selectedValues));
+    }
+
+    @Override
+    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+        return executeWithContext(() -> cellManager.sortRowsInRange(range, columns, ascending));
+    }
+
     private void updateCellAndVersion(IPosition position, String value) {
         Cell cell = cellManager.update(position, value, version + 1);
         version++;
@@ -113,5 +141,4 @@ public final class Sheet implements ISheet {
             return null;
         });
     }
-
 }
