@@ -11,6 +11,7 @@ public abstract class Drawer implements IDrawer{
     }
 
     protected String centralizedValue(String value, int length) {
+        value = value.length() > length ? value.substring(0, length - 3) + "..." : value;
         int spaces = length - value.length();
         int padLeft = spaces / 2;
         int padRight = spaces - padLeft;
