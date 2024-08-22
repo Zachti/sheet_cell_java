@@ -3,6 +3,7 @@ package sheet.interfaces;
 import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
+import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
 import range.CellRange;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ISheet extends Cloneable {
-    void updateCell(IPosition position, String value);
+    void updateCell(UpdateCellDto updateCellDto);
     Map<IPosition, Cell> getPastVersion(int version);
     Cell getCellByPosition(IPosition position);
     String getName();
@@ -26,6 +27,6 @@ public interface ISheet extends Cloneable {
     List<Cell> viewCellsInRange(CellRange range);
     List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues);
     List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
-    Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position);
+    Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
 }
 

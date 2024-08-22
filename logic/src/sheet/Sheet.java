@@ -5,6 +5,7 @@ import cache.interfaces.ICache;
 import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
+import cell.dto.UpdateCellDto;
 import common.interfaces.IGenericHandler;
 import position.interfaces.IPosition;
 import range.CellRange;
@@ -46,8 +47,8 @@ public final class Sheet implements ISheet {
     public String getName() { return this.name; }
 
     @Override
-    public void updateCell(IPosition position, String value) {
-        executeWithContext(() -> updateCellAndVersion(position, value));
+    public void updateCell(UpdateCellDto updateCellDto) {
+        executeWithContext(() -> updateCellAndVersion(updateCellDto));
     }
 
     @Override
@@ -91,7 +92,7 @@ public final class Sheet implements ISheet {
     public Map<IPosition, Cell> getCells() { return cellManager.getCells(); }
 
     @Override
-    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) { return cellManager.getWhatIfCells(originalValue, position); }
+    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) { return cellManager.getWhatIfCells(updateCellDtos); }
 
     @Override
     public int getVersion() { return version; }
@@ -120,8 +121,8 @@ public final class Sheet implements ISheet {
         return executeWithContext(() -> cellManager.sortRowsInRange(range, columns, ascending));
     }
 
-    private void updateCellAndVersion(IPosition position, String value) {
-        Cell cell = cellManager.update(position, value, version + 1);
+    private void updateCellAndVersion(UpdateCellDto updateCellDto) {
+        Cell cell = cellManager.update(updateCellDto, version + 1);
         version++;
         version2updateCount.put(version, cell.getObserversCount() + 1);
     }

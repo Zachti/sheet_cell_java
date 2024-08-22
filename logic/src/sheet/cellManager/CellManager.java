@@ -2,6 +2,7 @@ package sheet.cellManager;
 
 import cell.Cell;
 import cell.dto.CellBasicDetails;
+import cell.dto.UpdateCellDto;
 import comparator.RowComparator;
 import position.interfaces.IPosition;
 import range.CellRange;
@@ -36,11 +37,11 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public Cell update(IPosition position, String value, int version) {
-        Cell cell = getCellOrThrow(position);
+    public Cell update(UpdateCellDto updateCellDto, int version) {
+        Cell cell = getCellOrThrow(updateCellDto.position());
         int toUpdateCellIndex = getUpdateOrder(cell);
         try {
-            cell.update(value);
+            cell.update(updateCellDto.newOriginalValue());
             recalculateCellsFromIndex(toUpdateCellIndex);
         } catch (Exception e) {
             cell.onUpdateFail();
@@ -112,10 +113,12 @@ public class CellManager implements ICellManager {
     }
 
     @Override  
-    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
+    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
         Map<IPosition, Cell> whatIfCells = new HashMap<>(position2Cell);
         CellManager whatIfManager = new CellManager(whatIfCells);
-        whatIfManager.update(position, originalValue, 0);
+        updateCellDtos.forEach(updateCellDto -> {
+            whatIfManager.update(updateCellDto, 0);
+        });
         return whatIfManager.getCells();
     }
 

@@ -24,7 +24,7 @@ public final class Engine implements IEngine {
     @Override
     public void updateCell(UpdateCellDto updateCellDto) {
         safeExecute(() -> {
-            sheet.updateCell(updateCellDto.position(), updateCellDto.newOriginalValue());
+            sheet.updateCell(updateCellDto);
             return null;
         });
     }
@@ -91,8 +91,8 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
-        return safeExecute(() -> sheet.getWhatIfCells(originalValue, position));
+    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
+        return safeExecute(() -> sheet.getWhatIfCells(updateCellDtos));
     }
 
     private <T> T safeExecute(ISemaphoreTask<T> task) {
