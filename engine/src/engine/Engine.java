@@ -4,7 +4,8 @@ import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
-import common.thread.job.IJob;
+import common.thread.job.interfaces.IJob;
+import common.thread.job.interfaces.IJobQueue;
 import common.thread.job.JobQueue;
 import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
@@ -24,7 +25,7 @@ public final class Engine implements IEngine {
     private final static int MAX_CONCURRENT_JOBS = 10;
     private final static int MAX_QUEUE_SIZE = 20;
     private final List<ISheet> sheets = new LinkedList<>();
-    private final JobQueue jobQueue = new JobQueue(MAX_CONCURRENT_JOBS, MAX_QUEUE_SIZE);
+    private final IJobQueue jobQueue = new JobQueue(MAX_CONCURRENT_JOBS, MAX_QUEUE_SIZE);
 
     @Override
     public UUID addSheet(ISheet sheet) {

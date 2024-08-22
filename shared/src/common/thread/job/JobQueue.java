@@ -1,8 +1,10 @@
 package common.thread.job;
 
+import common.thread.job.interfaces.IJobQueue;
+
 import java.util.concurrent.*;
 
-public class JobQueue {
+public class JobQueue implements IJobQueue {
     private final ThreadPoolExecutor executor;
 
     public JobQueue(int poolSize, int queueSize) {
@@ -11,8 +13,10 @@ public class JobQueue {
         registerShutdownHook();
     }
 
+    @Override
     public <T> Future<T> addJob(Callable<T> job) { return executor.submit(job); }
 
+    @Override
     public void shutdown() {
         executor.shutdown();
         try {

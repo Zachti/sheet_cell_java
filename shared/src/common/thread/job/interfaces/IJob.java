@@ -1,4 +1,4 @@
-package common.thread.job;
+package common.thread.job.interfaces;
 
 @FunctionalInterface
 public interface IJob {
