@@ -17,21 +17,32 @@ public final class Engine implements IEngine {
     private final ISheet sheet;
     private final Semaphore semaphore = new Semaphore(1);
 
-    public Engine(ISheet sheet) { this.sheet = sheet; }
-
-    @Override
-    public void updateCell(UpdateCellDto updateCellDto) {
-        safeExecute(() -> { sheet.updateCell(updateCellDto.position(), updateCellDto.newOriginalValue()); return null; });
+    public Engine(ISheet sheet) {
+        this.sheet = sheet;
     }
 
     @Override
-    public Map<IPosition, Cell> getHistory(int version) { return safeExecute(() -> sheet.getPastVersion(version)); }
+    public void updateCell(UpdateCellDto updateCellDto) {
+        safeExecute(() -> {
+            sheet.updateCell(updateCellDto.position(), updateCellDto.newOriginalValue());
+            return null;
+        });
+    }
 
     @Override
-    public Map<Integer, Integer> getUpdateCountList() { return safeExecute(sheet::getUpdate2VersionCount); }
+    public Map<IPosition, Cell> getHistory(int version) {
+        return safeExecute(() -> sheet.getPastVersion(version));
+    }
 
     @Override
-    public String getSheetName() { return safeExecute(sheet::getName); }
+    public Map<Integer, Integer> getUpdateCountList() {
+        return safeExecute(sheet::getUpdate2VersionCount);
+    }
+
+    @Override
+    public String getSheetName() {
+        return safeExecute(sheet::getName);
+    }
 
     @Override
     public CellBasicDetails getCellBasicDetails(IPosition position) {
@@ -44,17 +55,30 @@ public final class Engine implements IEngine {
     }
 
     @Override
-
-    public void addRange(CellRange range) { safeExecute(() -> { sheet.addRange(range); return null; }); }
-
-    @Override
-    public void removeRange(CellRange range) { safeExecute(() -> { sheet.removeRange(range); return null; }); }
-
-    @Override
-    public List<CellRange> getRanges() { return safeExecute(sheet::getRanges); }
+    public void addRange(CellRange range) {
+        safeExecute(() -> {
+            sheet.addRange(range);
+            return null;
+        });
+    }
 
     @Override
-    public List<Cell> viewCellsInRange(CellRange range) { return safeExecute(() -> sheet.viewCellsInRange(range)); }
+    public void removeRange(CellRange range) {
+        safeExecute(() -> {
+            sheet.removeRange(range);
+            return null;
+        });
+    }
+
+    @Override
+    public List<CellRange> getRanges() {
+        return safeExecute(sheet::getRanges);
+    }
+
+    @Override
+    public List<Cell> viewCellsInRange(CellRange range) {
+        return safeExecute(() -> sheet.viewCellsInRange(range));
+    }
 
     @Override
     public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
@@ -64,6 +88,7 @@ public final class Engine implements IEngine {
     @Override
     public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
         return safeExecute(() -> sheet.sortRowsInRange(range, columns, ascending));
+    }
 
     @Override
     public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
@@ -84,3 +109,4 @@ public final class Engine implements IEngine {
         }
     }
 }
+

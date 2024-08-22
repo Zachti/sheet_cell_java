@@ -109,6 +109,7 @@ public class CellManager implements ICellManager {
                 .map(cell -> cell.getPosition().row())
                 .sorted(new RowComparator(columns, ascending))
                 .collect(Collectors.toList());
+    }
 
     @Override  
     public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
