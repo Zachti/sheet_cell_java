@@ -55,6 +55,16 @@ public final class Engine implements IEngine {
     @Override
     public List<Cell> viewCellsInRange(CellRange range) { return safeExecute(() -> sheet.viewCellsInRange(range)); }
 
+    @Override
+    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
+        return safeExecute(() -> sheet.getRowsByFilter(range, selectedValues));
+    }
+
+    @Override
+    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+        return safeExecute(() -> sheet.sortRowsInRange(range, columns, ascending));
+    }
+
     private <T> T safeExecute(ISemaphoreTask<T> task) {
         try {
             semaphore.acquire();

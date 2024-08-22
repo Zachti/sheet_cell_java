@@ -2,6 +2,7 @@ package sheet.cellManager;
 
 import cell.Cell;
 import cell.dto.CellBasicDetails;
+import comparator.RowComparator;
 import position.interfaces.IPosition;
 import range.CellRange;
 import sheet.builder.SheetBuilder;
@@ -85,6 +86,22 @@ public class CellManager implements ICellManager {
         return position2Cell.entrySet().stream()
                 .filter(entry -> range.contains(entry.getKey()))
                 .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
+        return getCellsInRange(range).stream()
+                .filter(cell -> selectedValues.contains(cell.getEffectiveValue()))
+                .map(cell -> cell.getPosition().row())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+        return getCellsInRange(range).stream()
+                .map(cell -> cell.getPosition().row())
+                .sorted(new RowComparator(columns, ascending))
                 .collect(Collectors.toList());
     }
 

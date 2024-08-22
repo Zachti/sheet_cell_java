@@ -1,4 +1,4 @@
-package sort;
+package comparator;
 
 import cell.enums.CellType;
 import position.PositionFactory;
@@ -30,7 +30,6 @@ public class RowComparator implements Comparator<Integer> {
     @Override
     public int compare(Integer row1, Integer row2) {
         ISheet sheet = TypedContextStore.getSheetStore().getContext();
-        // todo - set context before sorting !!!
         return columns.stream()
                 .map(column -> compareRows(sheet, row1, row2, column))
                 .filter(comparison -> comparison != 0)

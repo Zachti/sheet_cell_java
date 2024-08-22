@@ -21,4 +21,6 @@ public interface IEngine {
     void removeRange(CellRange range);
     List<CellRange> getRanges();
     List<Cell> viewCellsInRange(CellRange range);
+    List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues);
+    List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
 }

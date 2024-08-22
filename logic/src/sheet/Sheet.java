@@ -107,6 +107,16 @@ public final class Sheet implements ISheet {
         return executeWithContext(() -> cellManager.getCellsInRange(range));
     }
 
+    @Override
+    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
+        return executeWithContext(() -> cellManager.getRowsByFilter(range, selectedValues));
+    }
+
+    @Override
+    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+        return executeWithContext(() -> cellManager.sortRowsInRange(range, columns, ascending));
+    }
+
     private void updateCellAndVersion(IPosition position, String value) {
         Cell cell = cellManager.update(position, value, version + 1);
         version++;
