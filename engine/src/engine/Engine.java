@@ -41,6 +41,11 @@ public final class Engine implements IEngine {
         return safeExecute(() -> sheet.getCellDetails(position));
     }
 
+    @Override
+    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
+        return safeExecute(() -> sheet.getWhatIfCells(originalValue, position));
+    }
+
     private <T> T safeExecute(ISemaphoreTask<T> task) {
         try {
             semaphore.acquire();

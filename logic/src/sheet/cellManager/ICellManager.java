@@ -13,4 +13,5 @@ public interface ICellManager {
     Cell getCellByPosition(IPosition position);
     void validatePositionOnSheet(IPosition position);
     Map<IPosition, Cell> getCells();
+    Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position);
 }

@@ -27,6 +27,12 @@ public class CellManager implements ICellManager {
         topologicalSort = dependencyGraph.topologicalSort();
     }
 
+    public CellManager(Map<IPosition, Cell> position2Cell) {
+        this.position2Cell = position2Cell;
+        dependencyGraph = new DependencyGraph(position2Cell);
+        topologicalSort = dependencyGraph.topologicalSort();
+    }
+
     @Override
     public Cell update(IPosition position, String value, int version) {
         Cell cell = getCellOrThrow(position);
@@ -78,6 +84,14 @@ public class CellManager implements ICellManager {
 
     @Override
     public Map<IPosition, Cell> getCells() { return position2Cell; }
+
+    @Override
+    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
+        Map<IPosition, Cell> whatIfCells = new HashMap<>(position2Cell);
+        CellManager whatIfManager = new CellManager(whatIfCells);
+        whatIfManager.update(position, originalValue, 0);
+        return whatIfManager.getCells();
+    }
 
     private Map<IPosition, Cell> historicDetailsToHistoricPosition2Cell(Map<IPosition, CellBasicDetails> historicPosition2Cell) {
         Map<IPosition, Cell> position2Cell = new HashMap<>();

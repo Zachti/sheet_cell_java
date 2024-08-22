@@ -15,4 +15,5 @@ public interface IEngine {
     void updateCell(UpdateCellDto updateCellDto);
     CellBasicDetails getCellBasicDetails(IPosition position);
     CellDetails getCellDetails(IPosition position);
+    Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position);
 }

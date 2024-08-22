@@ -18,4 +18,5 @@ public interface ISheet extends Cloneable {
     CellDetails getCellDetails(IPosition position);
     Map<IPosition, Cell> getCells();
     int getVersion();
+    Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position);
 }

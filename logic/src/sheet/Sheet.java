@@ -87,6 +87,9 @@ public final class Sheet implements ISheet {
     public Map<IPosition, Cell> getCells() { return cellManager.getCells(); }
 
     @Override
+    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) { return cellManager.getWhatIfCells(originalValue, position); }
+
+    @Override
     public int getVersion() { return version; }
 
     private void updateCellAndVersion(IPosition position, String value) {
