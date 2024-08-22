@@ -6,6 +6,8 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
 import range.CellRange;
+import sheet.dto.FilterConfig;
+import sheet.dto.SortConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,7 @@ public interface IEngine {
     void removeRange(CellRange range);
     List<CellRange> getRanges();
     List<Cell> viewCellsInRange(CellRange range);
-    List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues);
-    List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
+    List<Integer> getRowsByFilter(FilterConfig filterConfig);
+    List<Integer> sortRowsInRange(SortConfig sortConfig);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
 }

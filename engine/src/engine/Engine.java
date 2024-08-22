@@ -5,8 +5,11 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import engine.semaphore.ISemaphoreTask;
+import engine.semaphore.SemaphoreTask;
 import position.interfaces.IPosition;
 import range.CellRange;
+import sheet.dto.FilterConfig;
+import sheet.dto.SortConfig;
 import sheet.interfaces.ISheet;
 
 import java.util.List;
@@ -35,9 +38,7 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public Map<Integer, Integer> getUpdateCountList() {
-        return safeExecute(sheet::getUpdate2VersionCount);
-    }
+    public Map<Integer, Integer> getUpdateCountList() { return safeExecute(sheet::getUpdate2VersionCount); }
 
     @Override
     public String getSheetName() {
@@ -56,18 +57,12 @@ public final class Engine implements IEngine {
 
     @Override
     public void addRange(CellRange range) {
-        safeExecute(() -> {
-            sheet.addRange(range);
-            return null;
-        });
+        safeVoidExecute(() -> sheet.addRange(range));
     }
 
     @Override
     public void removeRange(CellRange range) {
-        safeExecute(() -> {
-            sheet.removeRange(range);
-            return null;
-        });
+        safeVoidExecute(() -> sheet.removeRange(range));
     }
 
     @Override
@@ -81,13 +76,13 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
-        return safeExecute(() -> sheet.getRowsByFilter(range, selectedValues));
+    public List<Integer> getRowsByFilter(FilterConfig filterConfig) {
+        return safeExecute(() -> sheet.getRowsByFilter(filterConfig.range(), filterConfig.selectedValues()));
     }
 
     @Override
-    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
-        return safeExecute(() -> sheet.sortRowsInRange(range, columns, ascending));
+    public List<Integer> sortRowsInRange(SortConfig sortConfig) {
+        return safeExecute(() -> sheet.sortRowsInRange(sortConfig.range(), sortConfig.columns(), sortConfig.ascending()));
     }
 
     @Override
@@ -107,6 +102,13 @@ public final class Engine implements IEngine {
         } finally {
             semaphore.release();
         }
+    }
+
+    private void safeVoidExecute(SemaphoreTask task) {
+        safeExecute(() -> {
+            task.execute();
+            return null;
+        });
     }
 }
 
