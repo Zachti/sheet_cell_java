@@ -6,9 +6,10 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import engine.semaphore.ISemaphoreTask;
 import engine.semaphore.SemaphoreTask;
+import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
 import range.CellRange;
-import sheet.dto.FilterConfig;
+import filter.dto.FilterConfig;
 import sheet.dto.SortConfig;
 import sheet.interfaces.ISheet;
 
@@ -88,6 +89,11 @@ public final class Engine implements IEngine {
     @Override
     public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
         return safeExecute(() -> sheet.getWhatIfCells(updateCellDtos));
+    }
+
+    @Override
+    public List<Integer> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig) {
+        return safeExecute(() -> sheet.getRowsByMultiColumnsFilter(filterConfig.range(), filterConfig.selectedValues(), filterConfig.isAnd()));
     }
 
     private <T> T safeExecute(ISemaphoreTask<T> task) {

@@ -4,6 +4,8 @@ import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.UpdateCellDto;
 import comparator.RowComparator;
+import filter.CellFilter;
+import filter.IFilter;
 import position.interfaces.IPosition;
 import range.CellRange;
 import sheet.builder.SheetBuilder;
@@ -23,17 +25,20 @@ public class CellManager implements ICellManager {
     protected Map<IPosition, Cell> position2Cell;
     private final IGraph dependencyGraph;
     private List<Cell> topologicalSort;
+    private final IFilter filter;
 
     public CellManager(int numberOfRows, int numberOfCols) {
         position2Cell= new SheetBuilder(numberOfRows, numberOfCols).build();
         dependencyGraph = new DependencyGraph(position2Cell);
         topologicalSort = dependencyGraph.topologicalSort();
+        filter = new CellFilter(position2Cell);
     }
 
     public CellManager(Map<IPosition, Cell> position2Cell) {
         this.position2Cell = position2Cell;
         dependencyGraph = new DependencyGraph(position2Cell);
         topologicalSort = dependencyGraph.topologicalSort();
+        filter = new CellFilter(position2Cell);
     }
 
     @Override
@@ -89,20 +94,7 @@ public class CellManager implements ICellManager {
     public Map<IPosition, Cell> getCells() { return position2Cell; }
 
     @Override
-    public List<Cell> getCellsInRange(CellRange range) {
-        return position2Cell.entrySet().stream()
-                .filter(entry -> range.contains(entry.getKey()))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
-        return getCellsInRange(range).stream()
-                .filter(cell -> selectedValues.contains(cell.getEffectiveValue()))
-                .map(cell -> cell.getPosition().row())
-                .collect(Collectors.toList());
-    }
+    public List<Cell> getCellsInRange(CellRange range) { return filter.byRange(range); }
 
     @Override
     public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
@@ -116,10 +108,18 @@ public class CellManager implements ICellManager {
     public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
         Map<IPosition, Cell> whatIfCells = new HashMap<>(position2Cell);
         CellManager whatIfManager = new CellManager(whatIfCells);
-        updateCellDtos.forEach(updateCellDto -> {
-            whatIfManager.update(updateCellDto, 0);
-        });
+        updateCellDtos.forEach(updateCellDto -> whatIfManager.update(updateCellDto, 0));
         return whatIfManager.getCells();
+    }
+
+    @Override
+    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
+        return filter.ByValues(range, selectedValues);
+    }
+
+    @Override
+    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd) {
+        return filter.byMultiColumns(range, selectedValues, isAnd);
     }
 
     private Map<IPosition, Cell> historicDetailsToHistoricPosition2Cell(Map<IPosition, CellBasicDetails> historicPosition2Cell) {

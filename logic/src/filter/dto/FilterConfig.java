@@ -1,4 +1,4 @@
-package sheet.dto;
+package filter.dto;
 
 import range.CellRange;
 

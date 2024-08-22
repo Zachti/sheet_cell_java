@@ -4,9 +4,10 @@ import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
+import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
 import range.CellRange;
-import sheet.dto.FilterConfig;
+import filter.dto.FilterConfig;
 import sheet.dto.SortConfig;
 
 import java.util.List;
@@ -26,4 +27,5 @@ public interface IEngine {
     List<Integer> getRowsByFilter(FilterConfig filterConfig);
     List<Integer> sortRowsInRange(SortConfig sortConfig);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
+    List<Integer> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig);
 }

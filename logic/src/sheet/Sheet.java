@@ -121,6 +121,11 @@ public final class Sheet implements ISheet {
         return executeWithContext(() -> cellManager.sortRowsInRange(range, columns, ascending));
     }
 
+    @Override
+    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd) {
+        return executeWithContext(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
+    }
+
     private void updateCellAndVersion(UpdateCellDto updateCellDto) {
         Cell cell = cellManager.update(updateCellDto, version + 1);
         version++;

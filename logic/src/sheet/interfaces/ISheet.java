@@ -28,5 +28,6 @@ public interface ISheet extends Cloneable {
     List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues);
     List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
+    List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd);
 }
 
