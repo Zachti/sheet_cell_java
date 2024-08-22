@@ -1,5 +1,6 @@
 package function.text;
 
+import common.exception.InvalidIndicesException;
 import function.Function;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public abstract class Formatter extends Function<String> {
             List<String> strings = argsToTypeArray(String.class, args);
             validateArgsDefined(strings);
             return format(strings);
-        } catch (Exception e) {
+        } catch (InvalidIndicesException e) {
             return UNDEFINED;
         }
     }

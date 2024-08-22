@@ -7,6 +7,6 @@ public interface IVersionHistory<T> extends Cloneable{
     int getCurrentVersion();
     T getByVersionOrUnder(int version);
     void addNewVersion(T value, int version);
-    void copy(Map<Integer, T> version2History);
+    void copy(TreeMap<Integer, T> version2History);
     TreeMap<Integer, T> getStore();
 }

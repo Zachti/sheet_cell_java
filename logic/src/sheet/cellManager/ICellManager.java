@@ -17,4 +17,5 @@ public interface ICellManager {
     List<Cell> getCellsInRange(CellRange range);
     List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues);
     List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
+    Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position);
 }

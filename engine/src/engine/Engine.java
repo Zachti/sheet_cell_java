@@ -44,6 +44,7 @@ public final class Engine implements IEngine {
     }
 
     @Override
+
     public void addRange(CellRange range) { safeExecute(() -> { sheet.addRange(range); return null; }); }
 
     @Override
@@ -63,6 +64,10 @@ public final class Engine implements IEngine {
     @Override
     public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
         return safeExecute(() -> sheet.sortRowsInRange(range, columns, ascending));
+
+    @Override
+    public Map<IPosition, Cell> getWhatIfCells(String originalValue, IPosition position) {
+        return safeExecute(() -> sheet.getWhatIfCells(originalValue, position));
     }
 
     private <T> T safeExecute(ISemaphoreTask<T> task) {

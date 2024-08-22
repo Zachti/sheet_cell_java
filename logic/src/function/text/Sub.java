@@ -1,5 +1,6 @@
 package function.text;
 
+import common.exception.InvalidIndicesException;
 import function.enums.NumberOfArgs;
 
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static common.utils.InputValidation.isInRange;
-import static common.utils.InputValidation.validateOrThrow;
 
 public final class Sub extends Formatter {
     @Override
@@ -35,11 +35,9 @@ public final class Sub extends Formatter {
 
     private void validateIndices(String str, int index1, int index2) {
         int length = str.length();
-        validateOrThrow(
-                new int[]{index1, index2, length},
-                indices -> isInRange(indices[0], 0, indices[1]) && isInRange(indices[1], 0, indices[2] - 1),
-                indices -> String.format("Invalid indices: [%d, %d] for string of length %d", indices[0], indices[1], indices[3])
-        );
+        Optional.of(new int[]{index1, index2, length})
+                .filter(indices -> isInRange(indices[0], 0, indices[1]) && isInRange(indices[1], 0, indices[2] - 1))
+                .orElseThrow(() -> new InvalidIndicesException(String.format("Invalid indices: [%d, %d] for string of length %d", index1, index2, length)));
     }
 
     @Override
