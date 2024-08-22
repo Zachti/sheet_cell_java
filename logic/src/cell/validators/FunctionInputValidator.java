@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class FunctionInputValidator {
 
-    private static final String ARGUMENT_REGEX = "[a-zA-Z0-9_\\-.,/\\\\!@#$%^&*();~?<>\"]+|true|false";
+    private static final String ARGUMENT_REGEX = "[a-zA-Z0-9_\\-.,/\\\\!@#$%^&*();~?<>\"\\s]+|true|false";
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile(ARGUMENT_REGEX);
     private static final String FUNCTION_REGEX = "[^,{}]+|\\{[^{}]*}|\\{.+}";
     private static final Pattern FUNCTION_PATTERN = Pattern.compile(FUNCTION_REGEX);
