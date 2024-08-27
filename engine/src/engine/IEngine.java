@@ -9,7 +9,6 @@ import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
 import range.CellRange;
 import sheet.dto.SortConfig;
-import sheet.interfaces.ISheet;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,4 @@ public interface IEngine {
     Future<List<Integer>> sortRowsInRange(SortConfig sortConfig, UUID id);
     Future<Map<IPosition, Cell>> getWhatIfCells(List<UpdateCellDto> updateCellDtos, UUID id);
     Future<List<Integer>> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig, UUID id);
-    UUID addSheet(ISheet sheet);
-    void removeSheet(UUID id);
 }

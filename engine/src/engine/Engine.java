@@ -12,30 +12,21 @@ import position.interfaces.IPosition;
 import range.CellRange;
 import filter.dto.FilterConfig;
 import sheet.dto.SortConfig;
-import sheet.interfaces.ISheet;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import static sheet.SheetsManager.getSheetById;
+
 public final class Engine implements IEngine {
     private final static int MAX_CONCURRENT_JOBS = 10;
     private final static int MAX_QUEUE_SIZE = 20;
-    private final List<ISheet> sheets = new LinkedList<>();
     private final IJobQueue jobQueue = new JobQueue(MAX_CONCURRENT_JOBS, MAX_QUEUE_SIZE);
 
-    @Override
-    public UUID addSheet(ISheet sheet) {
-        UUID id = UUID.randomUUID();
-        this.sheets.add(sheet.onListInsert(id));
-        return id;
-    }
-
-    @Override
-    public void removeSheet(UUID id) { this.sheets.remove(getSheetById(id)); }
+    private Engine() {}
 
     @Override
     public Future<Void> updateCell(UpdateCellDto updateCellDto, UUID id) {
@@ -116,8 +107,8 @@ public final class Engine implements IEngine {
         });
     }
 
-    private ISheet getSheetById(UUID id) {
-        return sheets.stream().filter(sheet -> sheet.getId().equals(id)).findFirst().orElseThrow();
-    }
+    private static class EngineHolder {  private static final Engine INSTANCE = new Engine(); }
+
+    public static Engine getInstance() { return EngineHolder.INSTANCE; } // Bill Pugh Singleton design pattern
 }
 

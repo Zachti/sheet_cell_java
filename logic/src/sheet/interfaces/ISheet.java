@@ -6,12 +6,14 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
 import range.CellRange;
+import users.User;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface ISheet extends Cloneable {
+public interface ISheet extends Cloneable, PropertyChangeListener {
     void updateCell(UpdateCellDto updateCellDto);
     Map<IPosition, Cell> getPastVersion(int version);
     Cell getCellByPosition(IPosition position);
@@ -32,5 +34,7 @@ public interface ISheet extends Cloneable {
     List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd);
     ISheet onListInsert(UUID id);
     UUID getId();
+    void addUser(User user);
+    void removeUser(User user);
 }
 

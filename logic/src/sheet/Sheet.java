@@ -15,7 +15,10 @@ import sheet.interfaces.ISheet;
 import sheet.cellManager.CellManager;
 import sheet.cellManager.ICellManager;
 import store.TypedContextStore;
+import users.User;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeSupport;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -30,6 +33,10 @@ public final class Sheet implements ISheet {
     private final ICellManager cellManager;
     private final List<CellRange> ranges = new LinkedList<>();
     private final ReadWriteLock rwl = new ReentrantReadWriteLock();
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private final List<User> users = new LinkedList<>();
+    private final String OwnerUsername = "Owner";
+
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
@@ -136,10 +143,24 @@ public final class Sheet implements ISheet {
     @Override
     public UUID getId() { return id; }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("role".equals(evt.getPropertyName()) && evt.getOldValue() == id) {
+           users.add((User) evt.getSource());
+        }
+    }
+
+    @Override
+    public void addUser(User user) { users.add(user); }
+
+    @Override
+    public void removeUser(User user) { users.remove(user); }
+
     private void updateCellAndVersion(UpdateCellDto updateCellDto) {
         Cell cell = cellManager.update(updateCellDto, version + 1);
         version++;
         version2updateCount.put(version, cell.getObserversCount() + 1);
+        support.firePropertyChange("update", this.version - 1, this.version);
     }
 
     private <T> T executeWithContext(IGenericHandler<T> handler) {
