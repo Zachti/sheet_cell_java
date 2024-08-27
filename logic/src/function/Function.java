@@ -18,9 +18,13 @@ public abstract class Function<T> implements IFunction {
     }
 
     protected List<T> argsToTypeArray(Class<T> type, List<Object> args) {
-        return args.stream()
-                .map(type::cast)
-                .collect(Collectors.toCollection(ArrayList::new));
+        try {
+            return args.stream()
+                    .map(type::cast)
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Arguments must be of the same type! (either both strings or both numbers)");
+        }
     }
 
     protected void checkNumberOfArgs(List<Object> args) {
