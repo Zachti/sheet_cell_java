@@ -45,6 +45,7 @@ public final class Menu implements IMenu {
             return xmlProcessor.parse(choice, filePath);
         } catch (Exception e) {
             System.out.println("The file content is invalid. Please provide a valid existing sheet content file.");
+            System.out.println(e.getMessage());
             System.out.println("Please try again.");
             return getSheet();
         }
