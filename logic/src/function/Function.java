@@ -23,7 +23,7 @@ public abstract class Function<T> implements IFunction {
                     .map(type::cast)
                     .collect(Collectors.toCollection(ArrayList::new));
         } catch (ClassCastException e) {
-            throw new ClassCastException("Arguments must be of the same type! (either both strings or both numbers)");
+            throw new ClassCastException("Function arguments must be of the same type! (either both strings or both numbers)");
         }
     }
 
