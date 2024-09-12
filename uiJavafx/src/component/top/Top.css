@@ -1,0 +1,145 @@
+/* Style for the entire VBox */
+.vbox {
+    -fx-padding: 10;
+    -fx-spacing: 15;
+    -fx-background-color: rgba(200, 200, 200, 0.4);
+}
+
+/* Style for the HBox containers */
+.hbox {
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
+/* Style for Labels */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-background-color: lightgray;
+    -fx-padding: 5 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 10;
+}
+
+/* Style for TextFields */
+.text-field {
+    -fx-font-size: 14px;
+    -fx-border-color: rgba(200, 200, 200, 0.4);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5 10;
+}
+
+#cellIdTextField{
+    -fx-pref-width: 40;
+}
+
+#lastUpdateTextField{
+    -fx-pref-width: 40;
+}
+
+#originalValueTextField{
+    -fx-pref-width: 100;
+}
+
+/* Style for ComboBox */
+.combo-box {
+    -fx-font-size: 14px;
+    -fx-border-color: rgba(200, 200, 200, 0.4);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Style for Buttons */
+.button {
+    -fx-font-size: 14px;
+    -fx-background-color: lightblue;
+    -fx-text-fill: white;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 5 10;
+}
+
+.button:hover {
+    -fx-background-color: #87ceeb;
+}
+
+.button:pressed {
+    -fx-background-color: #4682b4;
+}
+
+/* Optional style for disabled elements */
+.text-field:disabled,
+.combo-box:disabled {
+    -fx-opacity: 0.6;
+}
+
+/* Style for the HBox containers, specifically for the one with buttons */
+#box {
+    -fx-padding: 15; /* Adjust padding to your liking */
+    -fx-spacing: 20; /* Increase spacing for better separation between buttons */
+}
+
+/* Reset default styling for MenuItems */
+.menu-item {
+    -fx-background-color: transparent; /* Ensure background color is transparent */
+    -fx-text-fill: rgba(200, 200, 200, 0.4); /* Set text color */
+    -fx-padding: 5 10; /* Adjust padding if needed */
+}
+
+/* Customize MenuItem on hover and pressed states */
+.menu-item:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.4) /* Light grey on hover */
+}
+
+.menu-item:pressed {
+    -fx-background-color: rgba(200, 200, 200, 0.4); /* Slightly darker grey when pressed */
+}
+
+/* Style for MenuBar */
+.menu-bar {
+    -fx-background-color: rgba(200, 200, 200, 0.4); /* Semi-transparent background */
+}
+
+/* Ensure Menu items within MenuBar are styled consistently */
+.menu {
+    -fx-background-color: rgba(200, 200, 200, 0.4); /* Consistent transparency */
+}
+
+/* New CSS for button press effect */
+.button:pressed {
+    -fx-background-color: #4682b4;
+}
+
+#plus, #minus {
+    -fx-background-radius: 50%; /* Makes the button circular */
+    -fx-min-width: 30px;        /* Smaller width for circle */
+    -fx-min-height: 30px;       /* Smaller height for circle */
+    -fx-max-width: 30px;        /* Fixed width for circle */
+    -fx-max-height: 30px;       /* Fixed height for circle */
+    -fx-text-fill: white;       /* Text color */
+    -fx-font-size: 14px;        /* Smaller font size */
+    -fx-alignment: center;      /* Center the text inside the button */
+    -fx-cursor: hand;           /* Change cursor on hover */
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 5, 0, 2, 2); /* Add a slight shadow */
+    -fx-transition: all 0.3s ease; /* Smooth transition */
+}
+
+/* Darker shade for pressed state */
+#plus:pressed {
+    -fx-background-color: #4682B4; /* Darker blue */
+    -fx-effect: none; /* Remove shadow on press */
+    -fx-translate-y: 2px; /* Create press effect by shifting down */
+}
+
+#minus:pressed {
+    -fx-background-color: #CD5C5C; /* Darker shade of light salmon */
+    -fx-effect: none; /* Remove shadow on press */
+    -fx-translate-y: 2px; /* Create press effect by shifting down */
+}
+
+#plus:hover, #minus:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 7, 0, 3, 3); /* Enhanced shadow on hover */
+}

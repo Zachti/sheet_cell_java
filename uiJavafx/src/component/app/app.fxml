@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Accordion?>
+<BorderPane fx:id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="component.app.AppController">
+    <top>
+        <fx:include fx:id="topComponent" source="../top/top.fxml"/>
+    </top>
+
+    <center>
+        <fx:include fx:id="sheetComponent" source="../sheet/sheet.fxml"/>
+    </center>
+</BorderPane>

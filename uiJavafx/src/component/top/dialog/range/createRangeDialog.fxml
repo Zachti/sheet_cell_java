@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+
+<?import javafx.scene.layout.VBox?>
+<GridPane xmlns:fx="http://javafx.com/fxml"
+          fx:controller= "component.top.dialog.range.RangeDialogController"
+          hgap="10" vgap="10" alignment="center">
+    <Label text="Range Name:" />
+    <TextField fx:id="rangeNameField" GridPane.columnIndex="1" />
+
+    <Label text="Start Point:" GridPane.rowIndex="1"/>
+    <TextField fx:id="startPointField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label text="End Point:" GridPane.rowIndex="2"/>
+    <TextField fx:id="endPointField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <VBox fx:id="errorBox" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" alignment="center">
+
+    </VBox>
+
+    <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2" alignment="center">
+        <Button text="OK" onAction="#handleOk" />
+        <Button text="Cancel" onAction="#handeCancel" />
+    </HBox>
+</GridPane>

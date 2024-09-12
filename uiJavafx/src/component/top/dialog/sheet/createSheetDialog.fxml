@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+
+<?import javafx.scene.layout.VBox?>
+<GridPane xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="component.top.dialog.sheet.SheetDialogController"
+          hgap="10" vgap="10" alignment="center">
+    <!-- Aligning labels and fields in the center of the grid -->
+    <Label text="Sheet Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="center_right" />
+    <TextField fx:id="sheetNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+    <Label text="Number of Columns:" GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="center_right" />
+    <TextField fx:id="numColumnsField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+    <Label text="Number of Rows:" GridPane.columnIndex="0" GridPane.rowIndex="2" alignment="center_right" />
+    <TextField fx:id="numRowsField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+    <VBox fx:id="errorBox" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" alignment="center">
+
+    </VBox>
+
+    <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2" alignment="center">
+        <Button text="OK" onAction="#handleOk" />
+        <Button text="Cancel" onAction="#handleCancel" />
+    </HBox>
+</GridPane>

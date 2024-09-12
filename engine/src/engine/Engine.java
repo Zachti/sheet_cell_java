@@ -18,8 +18,10 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public final class Engine implements IEngine {
-    private final ISheet sheet;
+    private ISheet sheet;
     private final Semaphore semaphore = new Semaphore(1);
+
+    public Engine(){}
 
     public Engine(ISheet sheet) {
         this.sheet = sheet;
