@@ -53,4 +53,8 @@ public class CellFilter implements IFilter {
                 .orElse(Collections.emptyList());
     }
 
+    @Override
+    public List<Cell> getCellsByRows(CellRange range, List<Integer> rows) {
+        return byRange(range).stream().filter(cell -> rows.contains(cell.getPosition().row())).toList();
+    }
 }

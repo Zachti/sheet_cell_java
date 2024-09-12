@@ -18,10 +18,8 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public final class Engine implements IEngine {
-    private ISheet sheet;
+    private final ISheet sheet;
     private final Semaphore semaphore = new Semaphore(1);
-
-    public Engine(){}
 
     public Engine(ISheet sheet) {
         this.sheet = sheet;
@@ -79,8 +77,8 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public List<Integer> getRowsByFilter(FilterConfig filterConfig) {
-        return safeExecute(() -> sheet.getRowsByFilter(filterConfig.range(), filterConfig.selectedValues()));
+    public Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig) {
+        return safeExecute(() -> sheet.getCellsByFilter(filterConfig.range(), filterConfig.selectedValues()));
     }
 
     @Override

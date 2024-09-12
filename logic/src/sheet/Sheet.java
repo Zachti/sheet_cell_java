@@ -112,8 +112,8 @@ public final class Sheet implements ISheet {
     }
 
     @Override
-    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
-        return executeWithContext(() -> cellManager.getRowsByFilter(range, selectedValues));
+    public Map<IPosition, Cell> getCellsByFilter(CellRange range, List<Object> selectedValues) {
+        return executeWithContext(() -> cellManager.getCellsByFilter(range, selectedValues));
     }
 
     @Override

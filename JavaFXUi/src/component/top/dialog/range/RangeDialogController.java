@@ -7,8 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import shticell.sheet.coordinate.Coordinate;
-import shticell.sheet.coordinate.CoordinateFactory;
+import position.PositionFactory;
+import position.interfaces.IPosition;
 
 public class RangeDialogController {
 
@@ -27,8 +27,8 @@ public class RangeDialogController {
     @FXML private void handleOk() {
         if (isInputValid()) {
             String rangeName = getRangeName();
-            Coordinate startCoordinate = getStartPoint();
-            Coordinate endCoordinate = getEndPoint();
+            IPosition startCoordinate = getStartPoint();
+            IPosition endCoordinate = getEndPoint();
             appController.addRange(rangeName, startCoordinate, endCoordinate);
             topController.addRangeToComboBox(rangeName);
             dialogStage.close();
@@ -48,12 +48,12 @@ public class RangeDialogController {
         return rangeNameField.getText();
     }
 
-    public Coordinate getStartPoint() {
-        return CoordinateFactory.getCoordinate(startPointField.getText());
+    public IPosition getStartPoint() {
+        return PositionFactory.create(startPointField.getText());
     }
 
-    public Coordinate getEndPoint() {
-        return CoordinateFactory.getCoordinate(endPointField.getText());
+    public IPosition getEndPoint() {
+        return PositionFactory.create(endPointField.getText());
     }
 
     private boolean isInputValid() {
@@ -67,14 +67,14 @@ public class RangeDialogController {
             isValid = false;
         }
 
-        if (!CoordinateFactory.isValidCoordinate(startPointField.getText())) {
+        if (!PositionFactory.isValidCoordinate(startPointField.getText())) {
             Label errorLabel = new Label("No valid start point!\n");
             errorLabel.setStyle("-fx-text-fill: red;");
             errorBox.getChildren().add(errorLabel);
             isValid = false;
         }
 
-        if (CoordinateFactory.isValidCoordinate(startPointField.getText()) && CoordinateFactory.isValidCoordinate(endPointField.getText())) {
+        if (PositionFactory.isValidCoordinate(new String[]{startPointField.getText(), endPointField.getText()})) {
             if (!isRangeValid(startPointField.getText(), endPointField.getText())) {
                 Label errorLabel = new Label("Start point should be less than or equal to end point!\n");
                 errorLabel.setStyle("-fx-text-fill: red;");
@@ -94,18 +94,18 @@ public class RangeDialogController {
     }
 
     public static boolean isRangeValid(String startPoint, String endPoint) {
-        Coordinate startPointCoordinate = CoordinateFactory.getCoordinate(startPoint);
-        Coordinate endPointCoordinate = CoordinateFactory.getCoordinate(endPoint);
+        IPosition startPointCoordinate = PositionFactory.create(startPoint);
+        IPosition endPointCoordinate = PositionFactory.create(endPoint);
 
         return startPointCoordinate.row() <= endPointCoordinate.row()
-                && startPointCoordinate.col() <= endPointCoordinate.col();
+                && startPointCoordinate.column() <= endPointCoordinate.column();
     }
 
     public static boolean isInBoundaries(String endPoint,int numOfRows, int numOfCols){
-        Coordinate endPointCoordinate = CoordinateFactory.getCoordinate(endPoint);
+        IPosition endPointCoordinate = PositionFactory.create(endPoint);
 
         return endPointCoordinate.row() <= numOfRows &&
-                endPointCoordinate.col() <= numOfCols;
+                endPointCoordinate.column() <= numOfCols;
     }
 
     public void setBoundaries(int _numOfRows,int _numOfCols){

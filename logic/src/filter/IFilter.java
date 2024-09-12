@@ -9,4 +9,5 @@ public interface IFilter {
     List<Cell> byRange(CellRange range);
     List<Integer> ByValues(CellRange range, List<Object> selectedValues);
     List<Integer> byMultiColumns(CellRange range, List<List<Object>> selectedValue, boolean isAnd);
+    List<Cell> getCellsByRows(CellRange range, List<Integer> rows);
 }

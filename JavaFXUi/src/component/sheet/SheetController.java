@@ -1,7 +1,6 @@
 package component.sheet;
 
 import component.sheet.Enum.PropType;
-import dto.SheetDto;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -16,17 +15,15 @@ import javafx.scene.layout.GridPane;
 import component.app.AppController;
 import javafx.util.Duration;
 import jaxb.dto.SheetConfiguration;
+import position.Position;
 import position.PositionFactory;
 import position.interfaces.IPosition;
-import shticell.sheet.coordinate.Coordinate;
-import shticell.sheet.coordinate.CoordinateFactory;
-import shticell.sheet.exception.LoopConnectionException;
 
 import java.util.*;
 
 public class SheetController {
 
-    private AppController appController;
+    private static AppController appController;
     private boolean isSheetLoaded = false;
 
     @FXML private GridPane gridPaneTop;
@@ -52,13 +49,12 @@ public class SheetController {
         rightLeftScroller.hvalueProperty().addListener((obs, oldVal, newVal) -> gridPaneTop.setLayoutX(Math.max(0, -newVal.doubleValue() * (gridPaneSheet.getWidth() - rightLeftScroller.getViewportBounds().getWidth()))));
     }
 
-
     void setColor(SimpleStringProperty prop,String color) {
         prop.set("-fx-border-color: " + color + "; -fx-border-width: 2px;");
     }
 
     public void setAppController(AppController appController) {
-        this.appController = appController;
+        SheetController.appController = appController;
     }
 
     public void clearSheet() {
@@ -67,8 +63,10 @@ public class SheetController {
         gridPaneTop.getChildren().clear();
         gridPaneLeft.getChildren().clear();
     }
-    public static void printRowAndColumnsLabels(SheetDto sheet, GridPane gridPaneLeft, GridPane gridPaneTop,int width, int height) {
-        for (int row = 1; row <= sheet.numberOfRows(); row++) {
+
+    public static void printRowAndColumnsLabels(GridPane gridPaneLeft, GridPane gridPaneTop, int width, int height) {
+        SheetConfiguration configuration = appController.getSheetConfiguration();
+        for (int row = 1; row <= configuration.layout().getRows(); row++) {
             Label rowLabel = new Label(String.valueOf(row));
             rowLabel.setPrefWidth((double) width /2);
             rowLabel.setPrefHeight(height);
@@ -78,8 +76,8 @@ public class SheetController {
             GridPane.setValignment(rowLabel, VPos.CENTER);
         }
 
-        for (int col = 0; col <= sheet.numberOfColumns(); col++) {
-            Label colLabel = new Label(Coordinate.getColumnLabel(col));
+        for (int col = 0; col <= configuration.layout().getColumns(); col++) {
+            Label colLabel = new Label(Position.getColumnLabel(col));
             colLabel.setPrefWidth(width);
             colLabel.setPrefHeight(height);
             gridPaneTop.add(colLabel, col, 0);
@@ -100,9 +98,7 @@ public class SheetController {
     }
 
     private void fillExistSheetWithData(SheetConfiguration configuration){
-        configuration.sheet().getCells().forEach((position, cell) -> {
-            sheetData.get(position).set(cell.getEffectiveValue());
-        });
+        configuration.sheet().getCells().forEach((position, cell) -> sheetData.get(position).set(cell.getEffectiveValue()));
         PauseTransition pause = new PauseTransition(Duration.millis(100));
         pause.setOnFinished(event -> configuration.sheet().getCells().forEach((position, cellDto) -> sheetData.get(position).set(cellDto.getEffectiveValue())));
         pause.play();
@@ -122,22 +118,22 @@ public class SheetController {
                     removePaint();
                 }
             });
-            cellField.setId(coordinate.toString());
-            gridPaneSheet.add(cellField, coordinate.col() , coordinate.row());
+            cellField.setId(position.toString());
+            gridPaneSheet.add(cellField, position.column() , position.row());
         });
 
-        printRowAndColumnsLabels(sheet, gridPaneLeft, gridPaneTop,cellWidth.get(),cellHeight.get());
+        printRowAndColumnsLabels(gridPaneLeft, gridPaneTop,cellWidth.get(),cellHeight.get());
     }
 
-    private void handleCellAction(TextField cellField, Coordinate coordinate) {
+    private void handleCellAction(TextField cellField, IPosition position) {
 
         try {
-            appController.updateCell(coordinate, cellField.getText());
-        } catch (LoopConnectionException e) {
+            appController.updateCell(position, cellField.getText());
+        } catch (Exception e) {
             showError(e.getMessage());
         }
 
-        fillSheet(appController.GetSheet());
+        fillSheet(appController.getSheetConfiguration());
     }
 
     public static void showError(String message) {
@@ -152,11 +148,11 @@ public class SheetController {
         appController.cellClicked(position);
     }
 
-    public void Paint(Set<IPosition> coordinateList, String color, PropType propType){
+    public void Paint(Set<IPosition> positions, String color, PropType propType){
         SimpleStringProperty styleProp = getProp(propType);
         List<StringProperty> bindingToProp = getBindingsToProp(propType);
         gridPaneSheet.getChildren().forEach(node -> {
-            if(coordinateList.contains(PositionFactory.create(node.getId()))){
+            if(positions.contains(PositionFactory.create(node.getId()))){
                 node.styleProperty().bind(styleProp);
                 bindingToProp.add(node.styleProperty());
             }
@@ -164,7 +160,6 @@ public class SheetController {
 
         setColor(styleProp,color);
     }
-
 
     public void removePaint(){
         dependsOnColor.set(defaultCellStyle.toString());

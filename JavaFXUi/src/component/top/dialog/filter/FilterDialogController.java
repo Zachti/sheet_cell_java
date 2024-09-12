@@ -1,9 +1,8 @@
 package component.top.dialog.filter;
 
+import cell.Cell;
 import component.app.AppController;
 import component.top.dialog.range.RangeDialogController;
-import dto.CellDto;
-import dto.SheetDto;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,9 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import shticell.sheet.coordinate.Coordinate;
-import shticell.sheet.coordinate.CoordinateFactory;
-import shticell.sheet.range.Range;
+import position.PositionFactory;
+import position.interfaces.IPosition;
+import range.CellRange;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +37,7 @@ public class FilterDialogController {
     @FXML private VBox errorBox;
 
     private final Map<String, SimpleBooleanProperty> checked = new HashMap<>();
+    // todo - leibo check if it cause errors cause the backend expect object and not string, change accordingly
 
     public void setAppController(AppController appController) {
         this.appController = appController;
@@ -47,12 +47,12 @@ public class FilterDialogController {
         this.dialogStage = dialogStage;
     }
 
-    public Coordinate getStartPoint() {
-        return CoordinateFactory.getCoordinate(startPointField.getText());
+    public IPosition getStartPoint() {
+        return PositionFactory.create(startPointField.getText());
     }
 
-    public Coordinate getEndPoint() {
-        return CoordinateFactory.getCoordinate(endPointField.getText());
+    public IPosition getEndPoint() {
+        return PositionFactory.create(endPointField.getText());
     }
 
     public String getKeyColumn() {
@@ -63,20 +63,20 @@ public class FilterDialogController {
         errorBox.getChildren().clear();
         boolean isValid = true;
 
-        if (!CoordinateFactory.isValidCoordinate(startPointField.getText())) {
+        if (!PositionFactory.isValidCoordinate(startPointField.getText())) {
             Label errorLabel = new Label("Invalid start point!\n");
             errorLabel.setStyle("-fx-text-fill: red;");
             errorBox.getChildren().add(errorLabel);
             isValid = false;
         }
-        if (!CoordinateFactory.isValidCoordinate(endPointField.getText())) {
+        if (!PositionFactory.isValidCoordinate(endPointField.getText())) {
             Label errorLabel = new Label("Invalid end point!\n");
             errorLabel.setStyle("-fx-text-fill: red;");
             errorBox.getChildren().add(errorLabel);
             isValid = false;
         }
 
-        if (CoordinateFactory.isValidCoordinate(startPointField.getText()) && CoordinateFactory.isValidCoordinate(endPointField.getText())) {
+        if (PositionFactory.isValidCoordinate(new String[] { startPointField.getText() , endPointField.getText() } )) {
             if (!RangeDialogController.isRangeValid(startPointField.getText(), endPointField.getText())) {
                 Label errorLabel = new Label("Start point should be less than or equal to end point!\n");
                 errorLabel.setStyle("-fx-text-fill: red;");
@@ -149,13 +149,13 @@ public class FilterDialogController {
     @FXML
     public void keyColumnChanged() {
         valuesListView.getItems().clear();
-        setValuesComboBox(appController.getValuesInColumn(getRange(),getCol()));
+        setValuesComboBox(appController.getValuesInColumn(getRange()));
     }
 
-    private Range getRange(){
-        Coordinate startPointCoordinate = getStartPoint();
-        Coordinate endPointCoordinate = getEndPoint();
-        return new Range("",startPointCoordinate,endPointCoordinate);
+    private CellRange getRange(){
+        IPosition startPointCoordinate = getStartPoint();
+        IPosition endPointCoordinate = getEndPoint();
+        return new CellRange("",startPointCoordinate,endPointCoordinate);
     }
 
     private int getCol(){
@@ -163,15 +163,15 @@ public class FilterDialogController {
     }
 
     public void ApplyFilter() {
-        List<String> filters = new ArrayList<>();
+        List<Object> filters = new ArrayList<>();
         checked.forEach((val, checked) -> {
             if (checked.getValue()) {
                 filters.add(val);
             }
         });
 
-        SheetDto sheet = appController.applyFilter(getCol(),getRange(),filters);
-        createNewSheetInDifferentWindows(sheet);
+        Map<IPosition, Cell> position2Cell = appController.getRowsByFilter(getRange(),filters);
+        createNewSheetInDifferentWindows(position2Cell);
     }
 
     @FXML

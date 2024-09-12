@@ -113,8 +113,11 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public List<Integer> getRowsByFilter(CellRange range, List<Object> selectedValues) {
-        return filter.ByValues(range, selectedValues);
+    public Map<IPosition, Cell> getCellsByFilter(CellRange range, List<Object> selectedValues) {
+        List<Integer> rows =  filter.ByValues(range, selectedValues);
+        List<Cell> cells =  filter.getCellsByRows(range, rows);
+        return cells.stream()
+                .collect(Collectors.toMap(Cell::getPosition, Function.identity()));
     }
 
     @Override

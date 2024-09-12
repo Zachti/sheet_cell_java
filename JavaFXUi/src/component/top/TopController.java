@@ -1,21 +1,18 @@
 package component.top;
 
+import cell.Cell;
+import cell.dto.CellDetails;
 import component.app.AppController;
 import component.sheet.SheetController;
 import component.top.dialog.filter.FilterDialogController;
 import component.top.dialog.sheet.SheetDialogController;
 import component.top.dialog.range.RangeDialogController;
-import dto.CellDto;
-import dto.SheetDto;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -25,13 +22,16 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import shticell.sheet.coordinate.Coordinate;
+import position.interfaces.IPosition;
+import range.CellRange;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TopController {
 
@@ -123,7 +123,7 @@ public class TopController {
     }
 
     @FXML
-    void HandleSaveFile() throws IOException {
+    void HandleSaveFile() throws Exception {
         if (path.get().endsWith(".xml") || path.get().isEmpty()) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Select XML file");
@@ -146,8 +146,6 @@ public class TopController {
                 }
             }
         } else {
-            File file = new File(path.get());
-            FileWriter writer = new FileWriter(file);
             appController.saveSheet(path.get());
         }
     }
@@ -179,10 +177,10 @@ public class TopController {
         path.set(previousPath);
     }
 
-    public void setOnMouseCoordinate(CellDto cell) {
-        cellId.set(cell.coordinate().toString());
-        originalValue.set(cell.originalValue());
-        lastUpdate.set(cell.LatestSheetVersionUpdated());
+    public void setOnMouseCoordinate(CellDetails cell) {
+        cellId.set(cell.basicDetails().position().toString());
+        originalValue.set(cell.originalValue().toString());
+        lastUpdate.set(cell.currentVersion());
     }
 
     @FXML
@@ -221,7 +219,10 @@ public class TopController {
     }
 
     private void handleRangeSelected(String selectedItem) {
-        appController.PaintCells(appController.GetRange(selectedItem).getRangeCellsCoordinate(), "pink");
+        CellRange selectedRange = appController.getRange(selectedItem);
+        Set<IPosition> toPrint = this.appController.getSheetConfiguration().sheet().getCells().values().stream().map(Cell::getPosition).filter(selectedRange::contains).collect(Collectors.toSet());
+        appController.PaintCells(toPrint, "pink");
+        // todo - leibo figure out what is selectedItem , do he meant to the range name ? cause that what i filtered , i cant understand it.
     }
 
     public void addRangesToComboBox(List<String> ranges) {
@@ -244,25 +245,25 @@ public class TopController {
     }
 
     private void handleVersionSelected(String selectedItem) {
-        SheetDto sheet = appController.getSheetByVersion(Integer.parseInt(selectedItem));
-        createNewSheetInDifferentWindows(sheet);
+        Map<IPosition, Cell> position2Cell = appController.getSheetByVersion(Integer.parseInt(selectedItem));
+        createNewSheetInDifferentWindows(position2Cell);
     }
 
-    public static void createNewSheetInDifferentWindows(SheetDto sheet) {
+    public static void createNewSheetInDifferentWindows(Map<IPosition, Cell> position2Cell) {
         GridPane gridPaneSheet = new GridPane();
         GridPane gridPaneLeft = new GridPane();
         GridPane gridPaneTop = new GridPane();
 
 
-        sheet.cells().forEach((coordinate, cell) -> {
-            TextField cellField = new TextField(cell.effectiveValue().toString());
+        position2Cell.forEach((position, cell) -> {
+            TextField cellField = new TextField(cell.getEffectiveValue());
             cellField.setPrefWidth(100);
             cellField.setPrefHeight(30);
-            cellField.setId(coordinate.toString());
-            gridPaneSheet.add(cellField, coordinate.col(), coordinate.row());
+            cellField.setId(position.toString());
+            gridPaneSheet.add(cellField, position.column(), position.row());
         });
 
-        SheetController.printRowAndColumnsLabels(sheet, gridPaneLeft, gridPaneTop,100,30);
+        SheetController.printRowAndColumnsLabels(gridPaneLeft, gridPaneTop,100,30);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(gridPaneSheet);

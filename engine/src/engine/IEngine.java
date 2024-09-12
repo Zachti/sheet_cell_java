@@ -24,7 +24,7 @@ public interface IEngine {
     void removeRange(CellRange range);
     List<CellRange> getRanges();
     List<Cell> viewCellsInRange(CellRange range);
-    List<Integer> getRowsByFilter(FilterConfig filterConfig);
+    Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig);
     List<Integer> sortRowsInRange(SortConfig sortConfig);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
     List<Integer> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig);
