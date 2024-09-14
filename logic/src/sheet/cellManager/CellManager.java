@@ -3,6 +3,7 @@ package sheet.cellManager;
 import cell.Cell;
 import cell.dto.CellBasicDetails;
 import cell.dto.UpdateCellDto;
+import cell.observability.interfaces.ISubject;
 import comparator.RowComparator;
 import filter.CellFilter;
 import filter.IFilter;
@@ -55,7 +56,7 @@ public class CellManager implements ICellManager {
         } finally {
             SetContextStore.getSubjectSetStore().clearContext();
         }
-        topologicalSort.stream().skip(toUpdateCellIndex).forEach(c -> c.addNewVersion(version));
+        addNewVersionForUpdatedCells(cell, toUpdateCellIndex, version);
         return cell;
     }
 
@@ -166,5 +167,25 @@ public class CellManager implements ICellManager {
                         )))
                 .map(cellMap -> new DependencyGraph(cellMap).topologicalSort())
                 .orElse(null);
+    }
+
+    private Set<ISubject> getAllAffectedCells(Cell cell) {
+        Set<ISubject> updatedCells = new HashSet<>();
+        collectObserversRecursively(cell, updatedCells);
+        return updatedCells;
+    }
+
+    private void collectObserversRecursively(ISubject cell, Set<ISubject> updatedCells) {
+        cell.getObservers().getValues().stream()
+                .filter(updatedCells::add)
+                .forEach(observer -> collectObserversRecursively(observer, updatedCells));
+    }
+
+    private void addNewVersionForUpdatedCells(Cell updatedCell, int toUpdateCellIndex, int version) {
+        Set<ISubject> updatedCells = getAllAffectedCells(updatedCell);
+        topologicalSort.stream()
+                .skip(toUpdateCellIndex)
+                .filter(updatedCells::contains)
+                .forEach(c -> c.addNewVersion(version));
     }
 }

@@ -33,8 +33,8 @@ public enum FunctionTypes {
     OR(new Or()),
     AND(new And()),
     BIGGER(new Bigger()),
-    LESS(new Less());
-//    IF(new If());
+    LESS(new Less()),
+    IF(new If());
 
     private final IFunction function;
 

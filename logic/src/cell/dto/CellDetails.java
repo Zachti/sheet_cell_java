@@ -7,8 +7,7 @@ import java.util.Set;
 public record CellDetails(CellBasicDetails basicDetails,
                           int currentVersion,
                           Set<IPosition> observers,
-                          Set<IPosition> observables,
-                          Object originalValue) {
+                          Set<IPosition> observables) {
 
     @Override
     public String toString()    {

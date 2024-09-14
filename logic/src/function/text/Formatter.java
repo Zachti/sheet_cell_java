@@ -20,6 +20,8 @@ public abstract class Formatter extends Function<String> {
             return format(strings);
         } catch (InvalidIndicesException e) {
             return UNDEFINED;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Function arguments must be of type string!");
         }
     }
 

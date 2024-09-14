@@ -10,5 +10,4 @@ public class Bigger extends Predicate {
             return operands.getFirst() >= operands.getLast();
         }
 
-
 }

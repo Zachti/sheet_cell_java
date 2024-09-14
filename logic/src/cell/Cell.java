@@ -83,8 +83,7 @@ public final class Cell extends Subject implements ICell {
                 getBasicDetails(),
                 versionHistory.getCurrentVersion(),
                 observers.keySet(),
-                observables.keySet(),
-                getOriginalValue().replace(",", ""));
+                observables.keySet());
     }
 
     @Override
