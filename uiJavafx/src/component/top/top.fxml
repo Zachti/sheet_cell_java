@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.Region?>
+<VBox xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.top.TopController" stylesheets="@Top.css">
+
+    <HBox id="box" spacing="10" styleClass="hbox">
+        <Region fx:id="spacer"/>
+        <MenuBar styleClass="menu-bar">
+            <Menu text="File" styleClass="menu">
+                <MenuItem text="New" onAction="#handleCreateNewSheet" styleClass="menu-item"/>
+                <MenuItem fx:id="saveButton" text="Save" disable="true" onAction="#HandleSaveFile" styleClass="menu-item"/>
+                <MenuItem text="Load" onAction="#handleLoadFile" styleClass="menu-item"/>
+            </Menu>
+        </MenuBar>
+
+        <Label text="Currently Loaded File Path:" styleClass="label"/>
+        <TextField fx:id="pathTextField" prefWidth="295" minWidth="295" disable="true" editable="false" styleClass="text-field"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+
+    </HBox>
+
+    <HBox spacing="10" styleClass="hbox-top">
+        <Region fx:id="spacer"/>
+        <Label text="Selected Cell ID:" prefWidth="200" minWidth="200" maxWidth="200" styleClass="label"/>
+        <TextField fx:id="cellIdTextField" disable="true" prefWidth="50" minWidth="50" maxWidth="50" styleClass="text-field"/>
+        <Label text="Last Cell Update Version:" prefWidth="200" minWidth="200" maxWidth="200" styleClass="label"/>
+        <TextField fx:id="lastUpdateTextField" disable="true" prefWidth="50" minWidth="50" maxWidth="50" styleClass="text-field"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="rangesComboBox" promptText="Range" styleClass="combo-box"/>
+        <Button fx:id="plus" text="+" onAction="#addRangeAction" styleClass="button"/>
+        <Button fx:id="minus" text="-" styleClass="button"/>
+        <Button fx:id="addFilter" text="Add Filter" onAction="#addFilter" styleClass="button"/>
+        <ComboBox fx:id="SheetVersionComboBox" promptText="Sheet Version" styleClass="combo-box"/>
+        <Region fx:id="spacer"/>
+    </HBox>
+
+    <HBox spacing="10" styleClass="hbox-bottom">
+        <Region fx:id="spacer"/>
+        <Label text="Set Row Height:" prefWidth="200" minWidth="200" maxWidth="200" styleClass="label"/>
+        <TextField fx:id="rowHeightTextField" prefWidth="50" styleClass="text-field"/>
+        <Label text="Set Column Width:" prefWidth="200" minWidth="200" maxWidth="200" styleClass="label"/>
+        <TextField fx:id="columnWidthTextField" prefWidth="50" styleClass="text-field"/>
+    </HBox>
+
+    <HBox spacing="10" styleClass="hbox-bottom">
+        <Region fx:id="spacer"/>
+        <Label text="Original Cell Value:" prefWidth="200" minWidth="200" maxWidth="200" styleClass="label"/>
+        <TextField fx:id="originalValueTextField"  disable="true"  maxWidth="320" minWidth="320" styleClass="text-field"/>
+        <Button fx:id="openStyleDialogButton" text="Open Style Dialog" onAction="#handleOpenStyleDialog" styleClass="button"/>
+        <Region fx:id="spacer"/>
+    </HBox>
+
+</VBox>

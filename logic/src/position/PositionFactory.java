@@ -16,7 +16,7 @@ public class PositionFactory {
 
     public static Position create(String pos) {
         char col = pos.charAt(0);
-        int row = pos.charAt(1);
+        int row = Character.getNumericValue(pos.charAt(1));
         return create(row, col);
     }
 

@@ -9,6 +9,8 @@ public interface ICell extends Cloneable{
     void setOriginalValue(String originalValue);
     String getOriginalValue();
     Object getEffectiveValue();
+    String getStyle();
+    void setStyle(String style);
     void setEffectiveValue();
     CellBasicDetails getPastVersion(int version);
     IPosition getPosition();

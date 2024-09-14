@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="component.sheet.SheetController" stylesheets="@sheet.css">
+
+    <center>
+        <ScrollPane fx:id="upDownScroller" fitToWidth="true" fitToHeight="true">
+            <ScrollPane fx:id="rightLeftScroller">
+                <BorderPane>
+                    <top>
+                        <GridPane fx:id="gridPaneTop"/>
+                    </top>
+                    <left>
+                        <GridPane fx:id="gridPaneLeft"/>
+                    </left>
+                    <center>
+                        <GridPane fx:id="gridPaneSheet" />
+                    </center>
+                </BorderPane>
+            </ScrollPane>
+        </ScrollPane>
+    </center>
+</BorderPane>

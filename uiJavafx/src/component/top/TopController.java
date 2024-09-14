@@ -7,21 +7,26 @@ import component.sheet.SheetController;
 import component.top.dialog.filter.FilterDialogController;
 import component.top.dialog.sheet.SheetDialogController;
 import component.top.dialog.range.RangeDialogController;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import position.PositionFactory;
 import position.interfaces.IPosition;
 import range.CellRange;
 
@@ -37,6 +42,12 @@ public class TopController {
 
     private AppController appController;
 
+    private static final int MIN_ROW_HEIGHT = 20;
+    private static final int MIN_COLUMN_WIDTH = 50;
+    private static final int MAX_ROW_HEIGHT = 150;
+    private static final int MAX_COLUMN_WIDTH = 400;
+    private final SimpleIntegerProperty cellWidth = new SimpleIntegerProperty(100);
+    private final SimpleIntegerProperty cellHeight = new SimpleIntegerProperty(30);
     String previousPath;
 
     @FXML
@@ -59,29 +70,88 @@ public class TopController {
     private Button minus;
     @FXML
     private Button addFilter;
-
+    @FXML
+    private Button IncreaseRow;
+    @FXML
+    private Button DecreaseRow;
+    @FXML
+    private Button IncreaseColumn;
+    @FXML
+    private Button DecreaseColumn;
+    @FXML
+    private TextField rowHeightTextField;
+    @FXML
+    private TextField columnWidthTextField;
+    @FXML
+    private Button openStyleDialogButton;
 
     private final SimpleBooleanProperty isSheetLoaded = new SimpleBooleanProperty(false);
     private final SimpleStringProperty originalValue = new SimpleStringProperty("");
     private final SimpleIntegerProperty lastUpdate = new SimpleIntegerProperty(0);
     private final SimpleStringProperty cellId = new SimpleStringProperty("");
     private final SimpleStringProperty path = new SimpleStringProperty("");
+    private BooleanProperty isCellFocused = new SimpleBooleanProperty(false);
 
     @FXML
     public void initialize() {
+        rowHeightTextField.setText("30");
+        columnWidthTextField.setText("100");
         pathTextField.textProperty().bind(path);
         originalValueTextField.textProperty().bind(originalValue);
         lastUpdateTextField.textProperty().bind(Bindings.format("%d", lastUpdate));
         cellIdTextField.textProperty().bind(cellId);
         saveButton.disableProperty().bind(isSheetLoaded.not());
+        rowHeightTextField.disableProperty().bind(isSheetLoaded.not());
+        columnWidthTextField.disableProperty().bind(isSheetLoaded.not());
         SheetVersionComboBox.disableProperty().bind(isSheetLoaded.not());
         rangesComboBox.disableProperty().bind(isSheetLoaded.not());
+        openStyleDialogButton.disableProperty().bind(isCellFocused.not());
+
         rangesComboBox.setOnAction(event -> {
-            if (((String) rangesComboBox.getValue()).isEmpty()) {
+            String selectedValue = (String) rangesComboBox.getValue();
+            if (selectedValue == null || selectedValue.isEmpty()) {
                 appController.removePaint();
             } else {
                 appController.removePaint();
-                handleRangeSelected((String) rangesComboBox.getValue());
+                handleRangeSelected(selectedValue);
+            }
+        });
+
+
+        rowHeightTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String previousValue = rowHeightTextField.getText();
+                int newHeight = Integer.parseInt(rowHeightTextField.getText());
+                if (newHeight >= MIN_ROW_HEIGHT && newHeight <= MAX_ROW_HEIGHT) {
+                    appController.getSheetComponentController().updateRowAndColumnSizes(cellWidth.get(), newHeight);
+                    cellHeight.set(newHeight);
+                }
+                else {
+                    rowHeightTextField.setText(previousValue);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please set a value between 20 and 150");
+                    Platform.runLater(alert::showAndWait);
+                }
+            }
+        });
+
+        columnWidthTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String previousValue = columnWidthTextField.getText();
+                int newWidth = Integer.parseInt(columnWidthTextField.getText());
+                if (newWidth >= MIN_COLUMN_WIDTH && newWidth <= MAX_COLUMN_WIDTH) {
+                    appController.getSheetComponentController().updateRowAndColumnSizes(newWidth, cellHeight.get());
+                    cellWidth.set(newWidth);
+                } else {
+                    columnWidthTextField.setText(previousValue);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please set a value between 50 and 400");
+                    Platform.runLater(alert::showAndWait);
+                }
             }
         });
 
@@ -93,13 +163,13 @@ public class TopController {
         pathTextField.styleProperty().unbind();
         SheetVersionComboBox.getItems().add("Version");
         SheetVersionComboBox.setOnAction(event -> {
-            if (!SheetVersionComboBox.getValue().equals("Version")) {
-                handleVersionSelected((String) SheetVersionComboBox.getValue());
+            String selectedValue = (String) SheetVersionComboBox.getValue();
+            if (selectedValue != null && !selectedValue.equals("Version")) {
+                handleVersionSelected(selectedValue);
                 SheetVersionComboBox.setValue("Version");
             }
         });
     }
-
 
     public void setAppController(AppController appController) {
         this.appController = appController;
@@ -123,6 +193,88 @@ public class TopController {
     }
 
     @FXML
+    private void handleOpenStyleDialog() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/component/top/dialog/cellStyles/cellStyleDialog.fxml"));
+        Parent root = loader.load();
+
+        component.top.CellStyleDialogController styleController = loader.getController();
+        styleController.setTopController(this);
+        styleController.setCellId(cellIdTextField.getText());
+
+        IPosition position = PositionFactory.create(cellIdTextField.getText());
+        TextField cellField = (TextField) appController.getSheetComponentController().getNodeByPosition(position);
+        String style = cellField.getStyle();
+
+        Color backgroundColor = appController.getSheetComponentController().extractColor(style, "-fx-background-color");
+        Color textColor = appController.getSheetComponentController().extractColor(style, "-fx-text-fill");
+        String textSize = appController.getSheetComponentController().extractTextSize(style, "-fx-font-size");
+
+        styleController.setCurrentValues(backgroundColor, textColor, textSize);
+
+        Stage stage = new Stage();
+        stage.setTitle(cellIdTextField.getText() + " Cell Style");
+        stage.setScene(new Scene(root));
+        stage.setWidth(250);
+        stage.setHeight(300);
+        stage.show();
+    }
+
+
+    public void applyCellStyle(String cellId, Color backgroundColor, Color textColor, String textSize) {
+        IPosition position = PositionFactory.create(cellId);
+        TextField cellField = (TextField) appController.getSheetComponentController().getNodeByPosition(position);
+        String existingStyle = cellField.getStyle();
+
+        // Update background color
+        String updatedStyle = updateStyleProperty(existingStyle, "-fx-background-color", String.format("#%02x%02x%02x",
+                (int) (backgroundColor.getRed() * 255),
+                (int) (backgroundColor.getGreen() * 255),
+                (int) (backgroundColor.getBlue() * 255)));
+
+        // Update text color
+        updatedStyle = updateStyleProperty(updatedStyle, "-fx-text-fill", String.format("#%02x%02x%02x",
+                (int) (textColor.getRed() * 255),
+                (int) (textColor.getGreen() * 255),
+                (int) (textColor.getBlue() * 255)));
+
+        updatedStyle = updateStyleProperty(updatedStyle, "-fx-border-radius", "5px");
+        updatedStyle = updateStyleProperty(updatedStyle, "-fx-border-color", "black");
+        updatedStyle = updateStyleProperty(updatedStyle, "-fx-border-width", "1px");
+
+        // Update text size
+        if (textSize != null && !textSize.isEmpty()) {
+            updatedStyle = updateStyleProperty(updatedStyle, "-fx-font-size", textSize + "px");
+        }
+
+        cellField.setStyle(updatedStyle);
+        appController.getSheetComponentController().updateCellStyle(position, updatedStyle);
+    }
+
+    private String updateStyleProperty(String style, String property, String value) {
+        String updatedStyle;
+        if (style.contains(property)) {
+            updatedStyle = style.replaceAll(property + ":\\s*[^;]+;", property + ": " + value + ";");
+        } else {
+            updatedStyle = style + " " + property + ": " + value + ";";
+        }
+        return updatedStyle;
+    }
+
+    public void resetCellStyle(String cellId) {
+        IPosition position = PositionFactory.create(cellId);
+        TextField cellField = (TextField) appController.getSheetComponentController().getNodeByPosition(position);
+
+        String initialStyle = "-fx-border-radius: 5px; " +
+                "-fx-border-color: black; " +
+                "-fx-border-width: 1px;";
+
+        cellField.setStyle(initialStyle);
+        appController.getSheetComponentController().updateCellStyle(position, initialStyle);
+    }
+
+
+
+    @FXML
     void HandleSaveFile() throws Exception {
         if (path.get().endsWith(".xml") || path.get().isEmpty()) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -139,7 +291,7 @@ public class TopController {
                 if (result.isPresent()) {
                     String filename = result.get();
                     if (!filename.isEmpty()) {
-                        filename = filename + ".bin";
+                        filename = filename + ".xml";
                         File fileToSave = new File(selectedDirectory, filename);
                         appController.saveSheet(fileToSave.getAbsolutePath());
                     }
@@ -177,6 +329,10 @@ public class TopController {
         path.set(previousPath);
     }
 
+    public void setCellFocused(boolean focused) {
+        isCellFocused.set(focused);
+    }
+
     public void setOnMouseCoordinate(CellDetails cell) {
         cellId.set(cell.basicDetails().position().toString());
         originalValue.set(cell.originalValue().toString());
@@ -194,6 +350,8 @@ public class TopController {
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.setScene(new Scene(root));
         dialogStage.setTitle("Filter");
+        dialogStage.setHeight(280);
+        dialogStage.setWidth(350);
         controller.setDialogStage(dialogStage);
         controller.setAppController(appController);
         dialogStage.showAndWait();
@@ -212,7 +370,7 @@ public class TopController {
         dialogStage.setTitle("Range Details");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.setScene(new Scene(root));
-        dialogStage.setHeight(240);
+        dialogStage.setHeight(280);
         dialogStage.setWidth(350);
         controller.setDialogStage(dialogStage);
         dialogStage.showAndWait();
@@ -257,10 +415,14 @@ public class TopController {
 
         position2Cell.forEach((position, cell) -> {
             TextField cellField = new TextField(cell.getEffectiveValue());
+            cellField.setEditable(false);
+            cellField.setFocusTraversable(false);
+            cellField.setMouseTransparent(true);
             cellField.setPrefWidth(100);
             cellField.setPrefHeight(30);
             cellField.setId(position.toString());
             gridPaneSheet.add(cellField, position.column(), position.row());
+            gridPaneSheet.setMargin(cellField, new Insets(2));
         });
 
         SheetController.printRowAndColumnsLabels(gridPaneLeft, gridPaneTop,100,30);
@@ -272,7 +434,7 @@ public class TopController {
 
         Stage newStage = new Stage();
 
-        Scene scene = new Scene(borderPane, 800, 600);
+        Scene scene = new Scene(borderPane, 1100, 800);
         newStage.setScene(scene);
 
         newStage.show();

@@ -14,6 +14,7 @@ public final class Cell extends Subject implements ICell {
     private IVersionHistory<CellBasicDetails> versionHistory;
     private IEffectiveValue effectiveValue;
     private final IPosition position;
+    private String style;
 
     public Cell(CreateCellDto createCellDto) {
         effectiveValue = new EffectiveValue(createCellDto.originalValue(), this);
@@ -39,6 +40,12 @@ public final class Cell extends Subject implements ICell {
         effectiveValue = new EffectiveValue(details.originalValue(), details.effectiveValue(), this);
         position = details.position();
     }
+
+    @Override
+    public String getStyle() {return style; }
+
+    @Override
+    public void setStyle(String style) { this.style = style; }
 
     @Override
     public IPosition getPosition() { return position; }

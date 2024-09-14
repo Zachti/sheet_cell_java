@@ -8,4 +8,5 @@ public interface IXMLProcessor {
     SheetConfiguration parse(SheetOption choice, String filePath) throws Exception;
     void save(String filePath) throws Exception;
     IPosition validatePosition(IPosition position);
+    void setSheetConfiguration(SheetConfiguration sheetConfiguration);
 }

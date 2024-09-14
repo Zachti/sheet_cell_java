@@ -36,4 +36,10 @@ public final class XMLProcessor implements IXMLProcessor {
         );
         return position;
     }
+
+    @Override
+    public void setSheetConfiguration(SheetConfiguration sheetConfiguration)
+    {
+        this.sheetConfiguration = sheetConfiguration;
+    }
 }

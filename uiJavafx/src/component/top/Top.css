@@ -1,0 +1,85 @@
+
+.menu-bar {
+    -fx-background-color: #034506;
+    -fx-padding: 0;
+    -fx-border-color: #034506;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.menu {
+    -fx-background-color: #023705;
+    -fx-text-fill: #ecf0f1;
+}
+
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ecf0f1;
+    -fx-padding: 10px 20px;
+}
+
+.menu-item:hover {
+    -fx-background-color: #5f8a5f;
+}
+
+.hbox-top {
+    -fx-spacing: 10px;
+    -fx-padding: 10px 0 0 0;
+}
+
+.hbox-bottom {
+    -fx-spacing: 10px;
+    -fx-padding: 0 0 10px 0;
+}
+
+.label {
+    -fx-text-fill: #ecf0f1;
+    -fx-background-color: #023705;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+}
+
+
+.text-field {
+    -fx-background-color: #023705;
+    -fx-text-fill: #ecf0f1;
+    -fx-padding: 5px;
+    -fx-border-radius: 5px;
+    -fx-alignment: center;
+}
+
+.text-field:disabled {
+    -fx-background-color: #023705;
+    -fx-text-fill: #ecf0f1;
+}
+
+
+.combo-box {
+    -fx-background-color: #023705;
+    -fx-text-fill: #ecf0f1;
+    -fx-padding: 5px;
+    -fx-border-radius: 5px;
+}
+
+.button {
+    -fx-background-color: #1abc9c; /* Green background color */
+    -fx-text-fill: #ecf0f1; /* Light text color */
+    -fx-padding: 5px 10px; /* Padding for buttons */
+    -fx-border-radius: 5px; /* Rounded corners */
+}
+
+#SheetVersionComboBox {
+    -fx-margin: 0 40px 0 0;
+}
+
+#spacer {
+    -fx-pref-width: 5px;
+}
+
+#spacer2 {
+    -fx-pref-width: 5px;
+}
+
+#originalValueTextField {
+    -fx-spacing: 100px;
+}

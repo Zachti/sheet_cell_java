@@ -2,6 +2,9 @@ package function.enums;
 
 import function.IFunction;
 import function.Math.*;
+import function.logic.*;
+import function.range.Average;
+import function.range.Sum;
 import function.system.Ref;
 import function.text.Concat;
 import function.text.Sub;
@@ -21,7 +24,17 @@ public enum FunctionTypes {
     POW(new Pow()),
     CONCAT(new Concat()),
     SUB(new Sub()),
-    REF(new Ref());
+    REF(new Ref()),
+    SUM(new Sum()),
+    AVERAGE(new Average()),
+    PERCENT(new Percent()),
+    EQUAL(new Equal()),
+    NOT(new Not()),
+    OR(new Or()),
+    AND(new And()),
+    BIGGER(new Bigger()),
+    LESS(new Less());
+//    IF(new If());
 
     private final IFunction function;
 

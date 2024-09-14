@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="component.top.CellStyleDialogController">
+    <Label text="Set Background Color:"/>
+    <ColorPicker fx:id="backgroundColorPicker"/>
+    <Label text="Set Text Color:"/>
+    <ColorPicker fx:id="textColorPicker"/>
+<!--    <Label text="Set Text Size:"/>-->
+<!--    <TextField fx:id="textSizeField"/>-->
+    <Button text="Apply" onAction="#handleApply"/>
+    <Button text="Reset" onAction="#handleReset"/>
+</VBox>

@@ -8,7 +8,9 @@ import component.sheet.Enum.PropType;
 import engine.Engine;
 import engine.IEngine;
 import filter.dto.FilterConfig;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import component.sheet.SheetController;
 import component.top.TopController;
@@ -47,26 +49,37 @@ public class AppController {
         sheetComponentController.setAppController(this);
     }
 
-    public SheetConfiguration getSheet(String path) {
+
+    public void getSheet(String path) {
         try {
             validateFileExists(path);
-            return xmlProcessor.parse(SheetOption.NEW, path);
+            topComponentController.clearVersion();
+            topComponentController.addVersion();
+            sheetComponentController.clearSheet();
+            SheetConfiguration sc = xmlProcessor.parse(SheetOption.NEW, path);
+            loadSheet(sc);
+
         } catch (Exception e) {
-            System.out.println("The file content is invalid. Please provide a valid existing sheet content file.");
-            System.out.println(e.getMessage());
-            System.out.println("Please try again.");
-            return getSheet(path);
+            topComponentController.setPreviousPath();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error occurred while importing the file.");
+            alert.setContentText(e.getMessage());
+            Platform.runLater(alert::showAndWait);
+
         }
     }
 
-    private void loadSheet(String path) {
-        sheetConfiguration = getSheet(path);
+    private void loadSheet(SheetConfiguration sc) {
+        sheetConfiguration = sc;
         engine = new Engine(sheetConfiguration.sheet());
         numOfRows = sheetConfiguration.layout().getRows();
         numOfCols = sheetConfiguration.layout().getColumns();
+        sheetConfiguration.uiUnits().setRowsHeightUnits(30);
+        sheetConfiguration.uiUnits().setColumnWidthUnits(100);
         sheetComponentController.fillSheet(sheetConfiguration);
         topComponentController.addRangesToComboBox(engine.getRanges().stream().map(CellRange::name).toList());
-        // todo - leibo where do you use this method ?
+        topComponentController.EnableButtons();
     }
 
     public void createNewSheet(String sheetName, int numColumns, int numRows){
@@ -78,10 +91,14 @@ public class AppController {
         STLSize uiSize = new STLSize();
         uiSize.setRowsHeightUnits(30);
         uiSize.setColumnWidthUnits(100);
-        SheetConfiguration configuration = new SheetConfiguration(sheet, uiSize, layout);
+        layout.setSTLSize(uiSize);
+        sheetConfiguration = new SheetConfiguration(sheet, uiSize, layout);
+        numOfRows = sheetConfiguration.layout().getRows();
+        numOfCols = sheetConfiguration.layout().getColumns();
+        xmlProcessor.setSheetConfiguration(sheetConfiguration);
         engine = new Engine(sheet);
         sheetComponentController.clearSheet();
-        sheetComponentController.fillSheet(configuration);
+        sheetComponentController.fillSheet(sheetConfiguration);
         topComponentController.clearVersion();
         topComponentController.addVersion();
     }
@@ -91,6 +108,14 @@ public class AppController {
         engine.updateCell(new UpdateCellDto(position, newValue));
     }
 
+    public SheetController getSheetComponentController() {
+        return sheetComponentController;
+    }
+
+    public TopController getTopComponentController() {
+        return topComponentController;
+    }
+
     public SheetConfiguration getSheetConfiguration(){ return sheetConfiguration; }
 
     public void cellClicked(IPosition position){
@@ -98,6 +123,7 @@ public class AppController {
         CellDetails details = engine.getCellDetails(position);
         Set<IPosition> observers = details.observers();
         Set<IPosition> observables = details.observables();
+        sheetComponentController.removePaint();
         sheetComponentController.Paint(observers,"Green", PropType.INFLUENCE_ON);
         sheetComponentController.Paint(observables,"Blue",PropType.DEPENDS_ON);
     }
@@ -140,6 +166,9 @@ public class AppController {
     }
 
     public void saveSheet(String path) throws Exception {
+        if (sheetConfiguration == null) {
+            throw new IllegalStateException("SheetConfiguration is not initialized.");
+        }
         xmlProcessor.save(path);
     }
 }

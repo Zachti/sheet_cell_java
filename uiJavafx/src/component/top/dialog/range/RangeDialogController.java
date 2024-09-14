@@ -101,11 +101,11 @@ public class RangeDialogController {
                 && startPointCoordinate.column() <= endPointCoordinate.column();
     }
 
-    public static boolean isInBoundaries(String endPoint,int numOfRows, int numOfCols){
+    public static boolean isInBoundaries(String endPoint, int numOfRows, int numOfCols) {
         IPosition endPointCoordinate = PositionFactory.create(endPoint);
-
+        char charOfCols = (char) (65 + numOfCols - 1);
         return endPointCoordinate.row() <= numOfRows &&
-                endPointCoordinate.column() <= numOfCols;
+                endPointCoordinate.column() <= charOfCols;
     }
 
     public void setBoundaries(int _numOfRows,int _numOfCols){
