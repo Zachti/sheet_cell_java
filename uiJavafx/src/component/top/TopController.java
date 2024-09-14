@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -48,14 +49,15 @@ public class TopController {
     private static final int MAX_COLUMN_WIDTH = 400;
     private final SimpleIntegerProperty cellWidth = new SimpleIntegerProperty(100);
     private final SimpleIntegerProperty cellHeight = new SimpleIntegerProperty(30);
-    String previousPath;
+    private String previousPath;
+    public String selectedRange;
 
     @FXML
     public MenuItem saveButton;
     @FXML
     private TextField pathTextField;
     @FXML
-    private TextField originalValueTextField;
+    public TextField originalValueTextField;
     @FXML
     private TextField lastUpdateTextField;
     @FXML
@@ -84,6 +86,14 @@ public class TopController {
     private TextField columnWidthTextField;
     @FXML
     private Button openStyleDialogButton;
+    @FXML
+    private Button alignLeftButton;
+    @FXML
+    private Button alignCenterButton;
+    @FXML
+    private Button alignRightButton;
+    @FXML
+    private Button tfSetCellValue;
 
     private final SimpleBooleanProperty isSheetLoaded = new SimpleBooleanProperty(false);
     private final SimpleStringProperty originalValue = new SimpleStringProperty("");
@@ -97,7 +107,13 @@ public class TopController {
         rowHeightTextField.setText("30");
         columnWidthTextField.setText("100");
         pathTextField.textProperty().bind(path);
-        originalValueTextField.textProperty().bind(originalValue);
+        originalValueTextField.textProperty().bindBidirectional(originalValue);
+        rangesComboBox.getItems().add("Default");
+        tfSetCellValue.disableProperty().bind(isSheetLoaded.not());
+        alignLeftButton.disableProperty().bind(isSheetLoaded.not());
+        alignCenterButton.disableProperty().bind(isSheetLoaded.not());
+        alignRightButton.disableProperty().bind(isSheetLoaded.not());
+        originalValueTextField.disableProperty().bind(isSheetLoaded.not());
         lastUpdateTextField.textProperty().bind(Bindings.format("%d", lastUpdate));
         cellIdTextField.textProperty().bind(cellId);
         saveButton.disableProperty().bind(isSheetLoaded.not());
@@ -105,11 +121,12 @@ public class TopController {
         columnWidthTextField.disableProperty().bind(isSheetLoaded.not());
         SheetVersionComboBox.disableProperty().bind(isSheetLoaded.not());
         rangesComboBox.disableProperty().bind(isSheetLoaded.not());
-        openStyleDialogButton.disableProperty().bind(isCellFocused.not());
+        openStyleDialogButton.disableProperty().bind(isSheetLoaded.not());
+
 
         rangesComboBox.setOnAction(event -> {
             String selectedValue = (String) rangesComboBox.getValue();
-            if (selectedValue == null || selectedValue.isEmpty()) {
+            if (selectedValue == "Default" || selectedValue.isEmpty()) {
                 appController.removePaint();
             } else {
                 appController.removePaint();
@@ -176,6 +193,23 @@ public class TopController {
     }
 
     @FXML
+    private void handleTextSetVal() {
+        String newValue = originalValueTextField.getText();
+        String cellId = cellIdTextField.getText();
+
+        if (!cellId.isEmpty()) {
+            IPosition position = PositionFactory.create(cellId);
+            CellDetails cellDetails = appController.getCellDetailsByPosition(position);
+            String currentValue = cellDetails.basicDetails().originalValue();
+
+            if (!newValue.equals(currentValue)) {
+                appController.updateCell(position, newValue);
+                appController.getSheetComponentController().refreshCellDisplay(position);
+            }
+        }
+    }
+
+    @FXML
     private void handleLoadFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
@@ -197,26 +231,30 @@ public class TopController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/component/top/dialog/cellStyles/cellStyleDialog.fxml"));
         Parent root = loader.load();
 
-        component.top.CellStyleDialogController styleController = loader.getController();
-        styleController.setTopController(this);
-        styleController.setCellId(cellIdTextField.getText());
+        String celln = cellIdTextField.getText();
+        if(!celln.isEmpty()) {
 
-        IPosition position = PositionFactory.create(cellIdTextField.getText());
-        TextField cellField = (TextField) appController.getSheetComponentController().getNodeByPosition(position);
-        String style = cellField.getStyle();
+            component.top.CellStyleDialogController styleController = loader.getController();
+            styleController.setTopController(this);
+            styleController.setCellId(celln);
 
-        Color backgroundColor = appController.getSheetComponentController().extractColor(style, "-fx-background-color");
-        Color textColor = appController.getSheetComponentController().extractColor(style, "-fx-text-fill");
-        String textSize = appController.getSheetComponentController().extractTextSize(style, "-fx-font-size");
+            IPosition position = PositionFactory.create(celln);
+            TextField cellField = (TextField) appController.getSheetComponentController().getNodeByPosition(position);
+            String style = cellField.getStyle();
 
-        styleController.setCurrentValues(backgroundColor, textColor, textSize);
+            Color backgroundColor = appController.getSheetComponentController().extractColor(style, "-fx-background-color");
+            Color textColor = appController.getSheetComponentController().extractColor(style, "-fx-text-fill");
+            String textSize = appController.getSheetComponentController().extractTextSize(style, "-fx-font-size");
 
-        Stage stage = new Stage();
-        stage.setTitle(cellIdTextField.getText() + " Cell Style");
-        stage.setScene(new Scene(root));
-        stage.setWidth(250);
-        stage.setHeight(300);
-        stage.show();
+            styleController.setCurrentValues(backgroundColor, textColor, textSize);
+
+            Stage stage = new Stage();
+            stage.setTitle(cellIdTextField.getText() + " Cell Style");
+            stage.setScene(new Scene(root));
+            stage.setWidth(250);
+            stage.setHeight(250);
+            stage.show();
+        }
     }
 
 
@@ -316,9 +354,34 @@ public class TopController {
         dialogStage.setScene(new Scene(root));
 
         dialogStage.setHeight(240);
+        dialogStage.setWidth(340);
 
         controller.setDialogStage(dialogStage);
         dialogStage.showAndWait();
+    }
+
+    @FXML
+    private void alignColumnLeft() {
+        alignColumnText(Pos.BASELINE_LEFT);
+    }
+
+    @FXML
+    private void alignColumnCenter() {
+        alignColumnText(Pos.BASELINE_CENTER);
+    }
+
+    @FXML
+    private void alignColumnRight() {
+        alignColumnText(Pos.BASELINE_RIGHT);
+    }
+
+    private void alignColumnText(Pos alignment) {
+        String cellId = cellIdTextField.getText();
+        if (!cellId.isEmpty()) {
+            IPosition position = PositionFactory.create(cellId);
+            int column = position.column();
+            appController.getSheetComponentController().alignColumnText(column, alignment);
+        }
     }
 
     public void EnableButtons(){
@@ -335,7 +398,7 @@ public class TopController {
 
     public void setOnMouseCoordinate(CellDetails cell) {
         cellId.set(cell.basicDetails().position().toString());
-        originalValue.set(cell.originalValue().toString());
+        originalValue.set(cell.basicDetails().originalValue());
         lastUpdate.set(cell.currentVersion());
     }
 
@@ -377,9 +440,10 @@ public class TopController {
     }
 
     private void handleRangeSelected(String selectedItem) {
-        CellRange selectedRange = appController.getRange(selectedItem);
-        Set<IPosition> toPrint = this.appController.getSheetConfiguration().sheet().getCells().values().stream().map(Cell::getPosition).filter(selectedRange::contains).collect(Collectors.toSet());
-        appController.PaintCells(toPrint, "pink");
+        CellRange range = appController.getRange(selectedItem);
+        Set<IPosition> toPrint = appController.getSheetConfiguration().sheet().getCells().values().stream().map(Cell::getPosition).filter(range::contains).collect(Collectors.toSet());
+        selectedRange = selectedItem;
+        appController.PaintCells(toPrint, "Pink");
         // todo - leibo figure out what is selectedItem , do he meant to the range name ? cause that what i filtered , i cant understand it.
     }
 
@@ -444,5 +508,8 @@ public class TopController {
         rangesComboBox.getItems().add(rangeName);
     }
 
+    public void refreshOriginalValueText(String newValue) {
+        originalValue.set(newValue);
+    }
 }
 

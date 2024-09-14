@@ -9,6 +9,10 @@
     <ColorPicker fx:id="textColorPicker"/>
 <!--    <Label text="Set Text Size:"/>-->
 <!--    <TextField fx:id="textSizeField"/>-->
-    <Button text="Apply" onAction="#handleApply"/>
-    <Button text="Reset" onAction="#handleReset"/>
+    <Region fx:id="spacer"/>
+    <HBox spacing="35" alignment="CENTER">
+        <Button text="Apply" onAction="#handleApply"/>
+        <Button text="Reset" onAction="#handleReset"/>
+    </HBox>
+
 </VBox>

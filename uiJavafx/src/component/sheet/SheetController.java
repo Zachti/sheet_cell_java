@@ -1,8 +1,8 @@
 package component.sheet;
 
+import cell.dto.CellDetails;
 import component.sheet.Enum.PropType;
 import javafx.animation.PauseTransition;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -13,7 +13,6 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import component.app.AppController;
 import javafx.scene.paint.Color;
@@ -22,6 +21,7 @@ import jaxb.dto.SheetConfiguration;
 import position.Position;
 import position.PositionFactory;
 import position.interfaces.IPosition;
+import range.CellRange;
 
 import java.util.*;
 
@@ -41,8 +41,9 @@ public class SheetController {
     @FXML public ScrollPane rightLeftScroller;
 
     public final StringProperty defaultCellStyle = new SimpleStringProperty("-fx-border-radius: 5px; -fx-border-color: black; -fx-border-width: 1px;");
-    public final StringProperty observers = new SimpleStringProperty( "-fx-border-color: green; -fx-border-width: 2px;");
-    public final StringProperty observables = new SimpleStringProperty( "-fx-border-color: blue; -fx-border-width: 2px;");
+    public final StringProperty observersStyle = new SimpleStringProperty( "-fx-border-color: green; -fx-border-width: 2px;");
+    public final StringProperty observablesStyle = new SimpleStringProperty( "-fx-border-color: blue; -fx-border-width: 2px;");
+    public final StringProperty rangeStyle = new SimpleStringProperty( "-fx-border-color: pink; -fx-border-width: 2px;");
     private final SimpleStringProperty dependsOnColor = new SimpleStringProperty("white");
     private final List<StringProperty> bindToDependsOnColor = new ArrayList<>();
     private final SimpleStringProperty influenceOnColor = new SimpleStringProperty("white");
@@ -204,9 +205,12 @@ public class SheetController {
         List<StringProperty> bindingToProp = getBindingsToProp(propType);
         final String styleString;
         if(color == "Green") {
-            styleString = observers.get();
+            styleString = observersStyle.get();
         } else if (color == "Blue") {
-            styleString = observables.get();
+            styleString = observablesStyle.get();
+        }
+        else if (color == "Pink"){
+            styleString = rangeStyle.get();
         }
         else {
             styleString = defaultCellStyle.get();
@@ -225,16 +229,48 @@ public class SheetController {
         });
     }
 
+    public void alignColumnText(int column, Pos alignment) {
+        gridPaneSheet.getChildren().forEach(node -> {
+            if (node instanceof TextField && GridPane.getColumnIndex(node) == column) {
+                ((TextField) node).setAlignment(alignment);
+            }
+        });
+    }
+
     public void removePaint() {
+        String rangeName = appController.getTopComponentController().selectedRange;
+        CellRange selectedRange;
+        if(rangeName != null && rangeName != "Default") {
+            selectedRange = appController.getRange(rangeName);
+        }
+        else {
+            selectedRange = null;
+        }
+
         gridPaneSheet.getChildren().forEach(node -> {
             IPosition position = PositionFactory.create(node.getId());
             if (node instanceof TextField && paintedCells.contains(position)) {
                 node.styleProperty().unbind();
-                node.setStyle(originalStyles.getOrDefault(position, defaultCellStyle.get()));
+                if (selectedRange != null && rangeName != "Default") {
+                    if(selectedRange.contains(position))
+                        node.setStyle(rangeStyle.get());
+                    else {
+                        node.setStyle(originalStyles.getOrDefault(position, defaultCellStyle.get()));
+                    }
+                } else {
+                    node.setStyle(originalStyles.getOrDefault(position, defaultCellStyle.get()));
+                }
             }
         });
         paintedCells.clear();
-        originalStyles.clear();
+    }
+
+    public void refreshCellDisplay(IPosition position) {
+        Node node = getNodeByPosition(position);
+        if (node instanceof TextField) {
+            TextField cellField = (TextField) node;
+            cellField.setText(appController.getTopComponentController().originalValueTextField.getText());
+        }
     }
 
     private void handleCellAction(TextField cellField, IPosition position) {
@@ -245,7 +281,9 @@ public class SheetController {
                 (newValue != null && newValue.isEmpty() && oldValue != null && !oldValue.isEmpty())) {
             try {
                 appController.updateCell(position, newValue);
-                previousValues.put(position, newValue);
+                CellDetails cell = appController.getCellDetailsByPosition(position);
+                previousValues.put(position, cell.basicDetails().effectiveValue().toString());
+                appController.getTopComponentController().refreshOriginalValueText(cell.basicDetails().originalValue());
             } catch (Exception e) {
                 showError(e.getMessage());
             }
@@ -268,6 +306,7 @@ public class SheetController {
             if (node instanceof TextField && node.getId().equals(position.toString())) {
                 TextField cellField = (TextField) node;
                 cellField.setStyle(style);
+                originalStyles.put(position, node.getStyle());
             }
         });
     }

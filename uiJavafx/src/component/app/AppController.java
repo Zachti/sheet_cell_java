@@ -49,7 +49,6 @@ public class AppController {
         sheetComponentController.setAppController(this);
     }
 
-
     public void getSheet(String path) {
         try {
             validateFileExists(path);
@@ -108,6 +107,7 @@ public class AppController {
         engine.updateCell(new UpdateCellDto(position, newValue));
     }
 
+
     public SheetController getSheetComponentController() {
         return sheetComponentController;
     }
@@ -123,9 +123,13 @@ public class AppController {
         CellDetails details = engine.getCellDetails(position);
         Set<IPosition> observers = details.observers();
         Set<IPosition> observables = details.observables();
-        sheetComponentController.removePaint();
+        removePaint();
         sheetComponentController.Paint(observers,"Green", PropType.INFLUENCE_ON);
         sheetComponentController.Paint(observables,"Blue",PropType.DEPENDS_ON);
+    }
+
+    public CellDetails getCellDetailsByPosition(IPosition position) {
+        return engine.getCellDetails(position);
     }
 
     public void PaintCells(Set<IPosition> positions, String color){
@@ -171,4 +175,6 @@ public class AppController {
         }
         xmlProcessor.save(path);
     }
+
+
 }

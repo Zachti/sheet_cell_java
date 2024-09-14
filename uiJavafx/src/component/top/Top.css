@@ -1,4 +1,3 @@
-
 .menu-bar {
     -fx-background-color: #034506;
     -fx-padding: 0;
@@ -10,7 +9,6 @@
     -fx-background-color: #023705;
     -fx-text-fill: #ecf0f1;
 }
-
 
 .menu-item {
     -fx-background-color: transparent;
@@ -24,7 +22,7 @@
 
 .hbox-top {
     -fx-spacing: 10px;
-    -fx-padding: 10px 0 0 0;
+    -fx-padding: 10px 0 10px 0;
 }
 
 .hbox-bottom {
@@ -39,7 +37,6 @@
     -fx-border-radius: 5px;
 }
 
-
 .text-field {
     -fx-background-color: #023705;
     -fx-text-fill: #ecf0f1;
@@ -49,16 +46,27 @@
 }
 
 .text-field:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #023705;
+    -fx-text-fill: #ecf0f1;
+}
+
+.ovalue{
+    -fx-opacity: 0.5;
     -fx-background-color: #023705;
     -fx-text-fill: #ecf0f1;
 }
 
 
-.combo-box {
+.combo-box .list-cell{
     -fx-background-color: #023705;
-    -fx-text-fill: #ecf0f1;
+    -fx-text-fill: white;
     -fx-padding: 5px;
     -fx-border-radius: 5px;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #1abc9c; /* Change this to your desired hover color */
 }
 
 .button {
