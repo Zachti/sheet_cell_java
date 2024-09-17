@@ -3,6 +3,7 @@ package cell.tree.node;
 import cell.Cell;
 import function.FunctionFactory;
 import function.IFunction;
+import store.SetContextStore;
 import store.TypedContextStore;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public final class EvaluationNode implements INode {
 
     private Object getArgsAndEvaluate() {
         TypedContextStore.getSubjectStore().setContext(parent);
+        SetContextStore.getCellSetStore().setContext(getNodeParentsContext());
         try {
         List<Object> args = children.stream()
                 .map(INode::getNodeValue)
@@ -48,6 +50,7 @@ public final class EvaluationNode implements INode {
         return function.execute(args);
         } finally {
             TypedContextStore.getSubjectStore().clearContext();
+            SetContextStore.getCellSetStore().clearContext();
         }
     }
 
@@ -80,4 +83,8 @@ public final class EvaluationNode implements INode {
             throw new RuntimeException(e);
         }
     }
+
+    private List<Cell> getNodeParentsContext() { return children.stream().filter(child -> isParentPresent((EvaluationNode) child)).map(child -> ((EvaluationNode) child).parent).toList(); }
+
+    private boolean isParentPresent(EvaluationNode node) { return node.parent != null; }
 }

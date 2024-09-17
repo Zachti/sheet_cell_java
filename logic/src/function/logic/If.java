@@ -1,9 +1,15 @@
 package function.logic;
 
+import cell.Cell;
+import cell.observability.interfaces.ISubject;
 import function.Function;
 import function.enums.NumberOfArgs;
+import store.SetContextStore;
+import store.TypedContextStore;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class If extends Function<Object> {
 
@@ -18,6 +24,7 @@ public class If extends Function<Object> {
         Object then = args.get(1);
         Object elze = args.getLast();
         validateReturnType(then, elze);
+        setObservers();
         return condition ? then : elze;
     }
 
@@ -30,4 +37,19 @@ public class If extends Function<Object> {
         }
     }
 
+    private void setObservers() {
+        ISubject callingCell = getCallingCell();
+        Set<Cell> references = SetContextStore.getCellSetStore().getContext();
+        Optional.ofNullable(references)
+                .ifPresent(cells -> cells.forEach(cell -> {
+                    cell.addObserver(callingCell);
+                    callingCell.addObservable(cell);
+                }));
+    }
+
+    private ISubject getCallingCell() {
+        ISubject callingCell = TypedContextStore.getSubjectStore().getContext();
+        return Optional.ofNullable(callingCell)
+                .orElseThrow(() -> new IllegalArgumentException("No calling cell context set"));
+    }
 }
