@@ -17,10 +17,7 @@ import sheet.cellManager.ICellManager;
 import store.TypedContextStore;
 
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class Sheet implements ISheet {
     private final String name;
@@ -28,7 +25,7 @@ public final class Sheet implements ISheet {
     private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
     private final ICellManager cellManager;
-    private final List<CellRange> ranges = new LinkedList<>();
+    private final Map<String, CellRange> ranges = new HashMap<>();
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
@@ -98,13 +95,21 @@ public final class Sheet implements ISheet {
     public int getVersion() { return version; }
 
     @Override
-    public void addRange(CellRange range) { ranges.add(range); }
+    public void addRange(CellRange range) {
+        if (ranges.containsKey(range.name())) {
+            throw new IllegalArgumentException("Range with name " + range.name() + " already exists");
+        }
+        ranges.put(range.name(), range);
+    }
 
     @Override
-    public List<CellRange> getRanges() { return ranges; }
+    public List<CellRange> getRanges() { return ranges.values().stream().toList(); }
 
     @Override
-    public void removeRange(CellRange range) { ranges.remove(range); }
+    public void removeRange(CellRange range) {
+        Optional.ofNullable(ranges.remove(range.name()))
+                .orElseThrow(() -> new NoSuchElementException("CellRange with name '" + range.name() + "' not found in the map."));
+    }
 
     @Override
     public List<Cell> viewCellsInRange(CellRange range) {
