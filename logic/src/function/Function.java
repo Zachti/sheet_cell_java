@@ -1,6 +1,8 @@
 package function;
 
+import common.exception.InvalidObserverUpdateException;
 import function.enums.NumberOfArgs;
+import store.TypedContextStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,10 @@ public abstract class Function<T> implements IFunction {
                     .map(type::cast)
                     .collect(Collectors.toCollection(ArrayList::new));
         } catch (ClassCastException e) {
-            throw new ClassCastException("Function arguments must be of the same type! (either both strings or both numbers)");
+            if (!TypedContextStore.getIsObserverUpdateStore().getContext()) {
+                throw new ClassCastException("Function arguments must be of the same type! (either both strings or both numbers)");
+            }
+            throw new InvalidObserverUpdateException();
         }
     }
 

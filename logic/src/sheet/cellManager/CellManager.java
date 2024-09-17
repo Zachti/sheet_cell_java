@@ -13,6 +13,7 @@ import sheet.builder.SheetBuilder;
 import sheet.cellManager.dependencyGraph.DependencyGraph;
 import sheet.cellManager.dependencyGraph.IGraph;
 import store.SetContextStore;
+import store.TypedContextStore;
 
 import java.util.*;
 import java.util.function.Function;
@@ -46,6 +47,7 @@ public class CellManager implements ICellManager {
     public Cell update(UpdateCellDto updateCellDto, int version) {
         Cell cell = getCellOrThrow(updateCellDto.position());
         int toUpdateCellIndex = getUpdateOrder(cell);
+        TypedContextStore.getIsObserverUpdateStore().setContext(false);
         try {
             cell.update(updateCellDto.newOriginalValue());
             recalculateCellsFromIndex(toUpdateCellIndex);
@@ -55,6 +57,7 @@ public class CellManager implements ICellManager {
             throw e;
         } finally {
             SetContextStore.getSubjectSetStore().clearContext();
+            TypedContextStore.getIsObserverUpdateStore().clearContext();
         }
         addNewVersionForUpdatedCells(cell, toUpdateCellIndex, version);
         return cell;
@@ -144,6 +147,8 @@ public class CellManager implements ICellManager {
     }
 
     private void recalculateCellsFromIndex(int startIndex) {
+        TypedContextStore.getIsObserverUpdateStore().clearContext();
+        TypedContextStore.getIsObserverUpdateStore().setContext(true);
         dependencyGraph.topologicalSort();
         topologicalSort.stream()
                 .skip(startIndex + 1)
