@@ -23,7 +23,7 @@ public interface ISheet extends Cloneable {
     int getVersion();
     void addRange(CellRange range);
     List<CellRange> getRanges();
-    void removeRange(CellRange range);
+    void removeRangeOrThrow(String rangeName);
     List<Cell> viewCellsInRange(CellRange range);
     Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues);
     List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);

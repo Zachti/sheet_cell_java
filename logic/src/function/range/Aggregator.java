@@ -44,10 +44,10 @@ public abstract class Aggregator extends Function<Double> {
             String value = cell.getEffectiveValue().replace(",", "");
             if (range.contains(pos) && isNumeric(value)) {
                 cellValues.add(Double.parseDouble(value));
+                range.addUser(cell);
             }
         });
         return cellValues;
-        // todo - do not forget to set context !
     }
 
     protected CellRange argsToCellRange(List<Object> args) {

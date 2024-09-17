@@ -21,7 +21,7 @@ public interface IEngine {
     CellBasicDetails getCellBasicDetails(IPosition position);
     CellDetails getCellDetails(IPosition position);
     void addRange(CellRange range);
-    void removeRange(CellRange range);
+    void removeRange(String rangeName);
     List<CellRange> getRanges();
     List<Cell> viewCellsInRange(CellRange range);
     Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig);

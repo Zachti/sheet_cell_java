@@ -62,8 +62,8 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public void removeRange(CellRange range) {
-        safeVoidExecute(() -> sheet.removeRange(range));
+    public void removeRange(String rangeName) {
+        safeVoidExecute(() -> sheet.removeRangeOrThrow(rangeName));
     }
 
     @Override

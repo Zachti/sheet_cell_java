@@ -96,19 +96,29 @@ public final class Sheet implements ISheet {
 
     @Override
     public void addRange(CellRange range) {
-        if (ranges.containsKey(range.name())) {
-            throw new IllegalArgumentException("Range with name " + range.name() + " already exists");
+        if (ranges.containsKey(range.getName())) {
+            throw new IllegalArgumentException("Range with name " + range.getName() + " already exists");
         }
-        ranges.put(range.name(), range);
+        ranges.put(range.getName(), range);
     }
 
     @Override
     public List<CellRange> getRanges() { return ranges.values().stream().toList(); }
 
     @Override
-    public void removeRange(CellRange range) {
-        Optional.ofNullable(ranges.remove(range.name()))
-                .orElseThrow(() -> new NoSuchElementException("CellRange with name '" + range.name() + "' not found in the map."));
+    public void removeRangeOrThrow(String rangeName) {
+        Optional.ofNullable(ranges.get(rangeName))
+                .ifPresentOrElse(this::removeRange,
+                        () -> {
+                    throw new NoSuchElementException("CellRange with name '" + rangeName + "' not found in the map.");
+                });
+    }
+
+    private void removeRange(CellRange range) {
+        if (!range.isValidToDelete()) {
+            throw new IllegalArgumentException("Cannot delete range " + range.getName() + " as it is not empty");
+        }
+        ranges.remove(range.getName());
     }
 
     @Override

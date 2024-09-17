@@ -7,6 +7,7 @@ import cell.interfaces.ICell;
 import cell.observability.Subject;
 import position.interfaces.IPosition;
 import store.SetContextStore;
+import store.TypedContextStore;
 import versionHistory.IVersionHistory;
 import versionHistory.VersionHistory;
 
@@ -69,6 +70,7 @@ public final class Cell extends Subject implements ICell {
     public void update(String originalValue) {
         try {
             SetContextStore.getSubjectSetStore().setContext(observables.getValues().stream().toList());
+            removeThisFromRangesUser();
             onSubjectUpdate();
             setOriginalValue(originalValue);
         } catch (Exception e) {
@@ -118,4 +120,10 @@ public final class Cell extends Subject implements ICell {
     }
 
     public static Cell fromBasicDetails(CellBasicDetails details) { return new Cell(details); }
+
+    private void removeThisFromRangesUser() {
+        TypedContextStore.getSheetStore().getContext().getRanges().stream()
+                .filter(r -> r.getUsers().containsKey(getPosition()))
+                .forEach(r -> r.removeUser(getPosition()));
+    }
 }
