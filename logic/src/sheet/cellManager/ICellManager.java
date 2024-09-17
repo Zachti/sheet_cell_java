@@ -3,7 +3,7 @@ package sheet.cellManager;
 import cell.Cell;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
-import range.CellRange;
+import range.IRange;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +15,9 @@ public interface ICellManager {
     Cell getCellByPosition(IPosition position);
     void validatePositionOnSheet(IPosition position);
     Map<IPosition, Cell> getCells();
-    List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
+    List<Integer> sortRowsInRange(IRange range, List<Character> columns, boolean ascending);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
-    Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues);
-    List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd);
-    List<Cell> getCellsInRange(CellRange range);
+    Map<IPosition, Cell> getCellsByFilter(IRange range, Map<Character, String> selectedValues);
+    List<Integer> getRowsByMultiColumnsFilter(IRange range, List<Map<Character, String>> selectedValues, boolean isAnd);
+    List<Cell> getCellsInRange(IRange range);
 }

@@ -8,7 +8,7 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import common.interfaces.IGenericHandler;
 import position.interfaces.IPosition;
-import range.CellRange;
+import range.IRange;
 import sheet.dto.CopySheetDto;
 import sheet.dto.CreateSheetDto;
 import sheet.interfaces.ISheet;
@@ -25,7 +25,7 @@ public final class Sheet implements ISheet {
     private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
     private final ICellManager cellManager;
-    private final Map<String, CellRange> ranges = new HashMap<>();
+    private final Map<String, IRange> ranges = new HashMap<>();
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
@@ -95,7 +95,7 @@ public final class Sheet implements ISheet {
     public int getVersion() { return version; }
 
     @Override
-    public void addRange(CellRange range) {
+    public void addRange(IRange range) {
         if (ranges.containsKey(range.getName())) {
             throw new IllegalArgumentException("Range with name " + range.getName() + " already exists");
         }
@@ -103,18 +103,18 @@ public final class Sheet implements ISheet {
     }
 
     @Override
-    public List<CellRange> getRanges() { return ranges.values().stream().toList(); }
+    public List<IRange> getRanges() { return ranges.values().stream().toList(); }
 
     @Override
     public void removeRangeOrThrow(String rangeName) {
         Optional.ofNullable(ranges.get(rangeName))
                 .ifPresentOrElse(this::removeRange,
                         () -> {
-                    throw new NoSuchElementException("CellRange with name '" + rangeName + "' not found in the map.");
+                    throw new NoSuchElementException("IRange with name '" + rangeName + "' not found in the map.");
                 });
     }
 
-    private void removeRange(CellRange range) {
+    private void removeRange(IRange range) {
         if (!range.isValidToDelete()) {
             throw new IllegalArgumentException("Cannot delete range " + range.getName() + " as it is not empty");
         }
@@ -122,22 +122,22 @@ public final class Sheet implements ISheet {
     }
 
     @Override
-    public List<Cell> viewCellsInRange(CellRange range) {
+    public List<Cell> viewCellsInRange(IRange range) {
         return executeWithContext(() -> cellManager.getCellsInRange(range));
     }
 
     @Override
-    public Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues) {
+    public Map<IPosition, Cell> getCellsByFilter(IRange range, Map<Character, String> selectedValues) {
         return executeWithContext(() -> cellManager.getCellsByFilter(range, selectedValues));
     }
 
     @Override
-    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+    public List<Integer> sortRowsInRange(IRange range, List<Character> columns, boolean ascending) {
         return executeWithContext(() -> cellManager.sortRowsInRange(range, columns, ascending));
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
+    public List<Integer> getRowsByMultiColumnsFilter(IRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
         return executeWithContext(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
     }
 

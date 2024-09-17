@@ -1,7 +1,7 @@
 package sheet.dto;
 
-import range.CellRange;
+import range.IRange;
 
 import java.util.List;
 
-public record SortConfig(CellRange range, List<Character> columns, boolean ascending) {}
+public record SortConfig(IRange range, List<Character> columns, boolean ascending) {}

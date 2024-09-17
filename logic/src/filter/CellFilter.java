@@ -2,7 +2,7 @@ package filter;
 
 import cell.Cell;
 import position.interfaces.IPosition;
-import range.CellRange;
+import range.IRange;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +18,7 @@ public class CellFilter implements IFilter {
     }
 
     @Override
-    public List<Cell> byRange(CellRange range) {
+    public List<Cell> byRange(IRange range) {
         return position2Cell.entrySet().stream()
                 .filter(entry -> range.contains(entry.getKey()))
                 .map(Map.Entry::getValue)
@@ -26,7 +26,7 @@ public class CellFilter implements IFilter {
     }
 
     @Override
-    public List<Integer> ByValues(CellRange range, Map<Character, String> selectedValues) {
+    public List<Integer> ByValues(IRange range, Map<Character, String> selectedValues) {
         return byRange(range).stream()
                 .filter(cell -> isCellInSelectedValues(cell, selectedValues))
                 .map(cell -> cell.getPosition().row())
@@ -34,11 +34,11 @@ public class CellFilter implements IFilter {
     }
 
     @Override
-    public List<Integer> byMultiColumns(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
+    public List<Integer> byMultiColumns(IRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
         return isAnd ? ByAndValues(range, selectedValues) : ByOrValues(range, selectedValues);
     }
 
-    private List<Integer> ByAndValues(CellRange range, List<Map<Character, String>> selectedValues) {
+    private List<Integer> ByAndValues(IRange range, List<Map<Character, String>> selectedValues) {
         return selectedValues.stream()
                 .map(values -> ByValues(range, values))
                 .reduce((rows1, rows2) -> rows1.stream().filter(rows2::contains).collect(Collectors.toList()))
@@ -46,7 +46,7 @@ public class CellFilter implements IFilter {
 
     }
 
-    private List<Integer> ByOrValues(CellRange range, List<Map<Character, String>> selectedValues) {
+    private List<Integer> ByOrValues(IRange range, List<Map<Character, String>> selectedValues) {
         return selectedValues.stream()
                 .map(values -> ByValues(range, values))
                 .reduce((rows1, rows2) -> Stream.concat(rows1.stream(), rows2.stream()).distinct().collect(Collectors.toList()))
@@ -54,7 +54,7 @@ public class CellFilter implements IFilter {
     }
 
     @Override
-    public List<Cell> getCellsByRows(CellRange range, List<Integer> rows) {
+    public List<Cell> getCellsByRows(IRange range, List<Integer> rows) {
         return byRange(range).stream().filter(cell -> rows.contains(cell.getPosition().row())).toList();
     }
 

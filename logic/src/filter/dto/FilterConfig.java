@@ -1,7 +1,7 @@
 package filter.dto;
 
-import range.CellRange;
+import range.IRange;
 
 import java.util.Map;
 
-public record FilterConfig(CellRange range, Map<Character, String> selectedValues) {}
+public record FilterConfig(IRange range, Map<Character, String> selectedValues) {}

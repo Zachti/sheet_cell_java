@@ -8,7 +8,7 @@ import comparator.RowComparator;
 import filter.CellFilter;
 import filter.IFilter;
 import position.interfaces.IPosition;
-import range.CellRange;
+import range.IRange;
 import sheet.builder.SheetBuilder;
 import sheet.cellManager.dependencyGraph.DependencyGraph;
 import sheet.cellManager.dependencyGraph.IGraph;
@@ -98,10 +98,10 @@ public class CellManager implements ICellManager {
     public Map<IPosition, Cell> getCells() { return position2Cell; }
 
     @Override
-    public List<Cell> getCellsInRange(CellRange range) { return filter.byRange(range); }
+    public List<Cell> getCellsInRange(IRange range) { return filter.byRange(range); }
 
     @Override
-    public List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending) {
+    public List<Integer> sortRowsInRange(IRange range, List<Character> columns, boolean ascending) {
         return getCellsInRange(range).stream()
                 .map(cell -> cell.getPosition().row())
                 .sorted(new RowComparator(columns, ascending))
@@ -117,7 +117,7 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues) {
+    public Map<IPosition, Cell> getCellsByFilter(IRange range, Map<Character, String> selectedValues) {
         List<Integer> rows =  filter.ByValues(range, selectedValues);
         List<Cell> cells =  filter.getCellsByRows(range, rows);
         return cells.stream()
@@ -125,7 +125,7 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
+    public List<Integer> getRowsByMultiColumnsFilter(IRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
         return filter.byMultiColumns(range, selectedValues, isAnd);
     }
 

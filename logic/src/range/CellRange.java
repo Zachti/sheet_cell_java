@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class CellRange {
+public class CellRange implements IRange{
     private final String name;
     private final IPosition start;
     private final IPosition end;
@@ -20,22 +20,30 @@ public class CellRange {
         this.users = new HashMap<>(users);
     }
 
+    @Override
     public String getName() { return name; }
 
+    @Override
     public IPosition getStart() { return start; }
 
+    @Override
     public IPosition getEnd() { return end; }
 
+    @Override
     public Map<IPosition, Cell> getUsers() { return new HashMap<>(users); }
 
+    @Override
     public void addUser(Cell cell) { users.put(cell.getPosition(), cell); }
 
+    @Override
     public void removeUser(IPosition pos) {
         Optional.ofNullable(users.get(pos)).ifPresent(cell -> users.remove(pos));
     }
 
+    @Override
     public boolean isValidToDelete() { return users.isEmpty(); }
 
+    @Override
     public boolean contains(IPosition position) {
         return position.column() >= start.column() && position.column() <= end.column() &&
                 position.row() >= start.row() && position.row() <= end.row();

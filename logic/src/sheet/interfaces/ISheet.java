@@ -5,7 +5,7 @@ import cell.dto.CellBasicDetails;
 import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
-import range.CellRange;
+import range.IRange;
 
 import java.util.List;
 import java.util.Map;
@@ -21,13 +21,13 @@ public interface ISheet extends Cloneable {
     CellDetails getCellDetails(IPosition position);
     Map<IPosition, Cell> getCells();
     int getVersion();
-    void addRange(CellRange range);
-    List<CellRange> getRanges();
+    void addRange(IRange range);
+    List<IRange> getRanges();
     void removeRangeOrThrow(String rangeName);
-    List<Cell> viewCellsInRange(CellRange range);
-    Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues);
-    List<Integer> sortRowsInRange(CellRange range, List<Character> columns, boolean ascending);
+    List<Cell> viewCellsInRange(IRange range);
+    Map<IPosition, Cell> getCellsByFilter(IRange range, Map<Character, String> selectedValues);
+    List<Integer> sortRowsInRange(IRange range, List<Character> columns, boolean ascending);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
-    List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd);
+    List<Integer> getRowsByMultiColumnsFilter(IRange range, List<Map<Character, String>> selectedValues, boolean isAnd);
 }
 

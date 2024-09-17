@@ -2,7 +2,7 @@ package function.range;
 
 import function.Function;
 import function.enums.NumberOfArgs;
-import range.CellRange;
+import range.IRange;
 import store.TypedContextStore;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public abstract class Aggregator extends Function<Double> {
     private List<Double> rangeToValueList(List<Object> args) {
         List<Double> cellValues = new LinkedList<>();
         checkNumberOfArgs(args);
-        CellRange range = argsToCellRange(args);
+        IRange range = argsToIRange(args);
         TypedContextStore.getSheetStore().getContext().getCells().forEach((pos, cell) -> {
             String value = cell.getEffectiveValue().replace(",", "");
             if (range.contains(pos) && isNumeric(value)) {
@@ -50,9 +50,9 @@ public abstract class Aggregator extends Function<Double> {
         return cellValues;
     }
 
-    protected CellRange argsToCellRange(List<Object> args) {
+    protected IRange argsToIRange(List<Object> args) {
         return args.stream()
-                .map(CellRange.class::cast)
+                .map(IRange.class::cast)
                 .collect(Collectors.toCollection(ArrayList::new))
                 .getFirst();
     }
