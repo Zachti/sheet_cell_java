@@ -26,29 +26,29 @@ public class CellFilter implements IFilter {
     }
 
     @Override
-    public List<Integer> ByValues(CellRange range, List<Object> selectedValues) {
+    public List<Integer> ByValues(CellRange range, Map<Character, String> selectedValues) {
         return byRange(range).stream()
-                .filter(cell -> selectedValues.contains(cell.getEffectiveValue()))
+                .filter(cell -> isCellInSelectedValues(cell, selectedValues))
                 .map(cell -> cell.getPosition().row())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Integer> byMultiColumns(CellRange range, List<List<Object>> selectedValue, boolean isAnd) {
-        return isAnd ? ByAndValues(range, selectedValue) : ByOrValues(range, selectedValue);
+    public List<Integer> byMultiColumns(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
+        return isAnd ? ByAndValues(range, selectedValues) : ByOrValues(range, selectedValues);
     }
 
-    private List<Integer> ByAndValues(CellRange range, List<List<Object>> selectedValue) {
-        return selectedValue.stream()
-                .map(selectedValues -> ByValues(range, selectedValues))
+    private List<Integer> ByAndValues(CellRange range, List<Map<Character, String>> selectedValues) {
+        return selectedValues.stream()
+                .map(values -> ByValues(range, values))
                 .reduce((rows1, rows2) -> rows1.stream().filter(rows2::contains).collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
 
     }
 
-    private List<Integer> ByOrValues(CellRange range, List<List<Object>> selectedValue) {
-        return selectedValue.stream()
-                .map(selectedValues -> ByValues(range, selectedValues))
+    private List<Integer> ByOrValues(CellRange range, List<Map<Character, String>> selectedValues) {
+        return selectedValues.stream()
+                .map(values -> ByValues(range, values))
                 .reduce((rows1, rows2) -> Stream.concat(rows1.stream(), rows2.stream()).distinct().collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
     }
@@ -56,5 +56,10 @@ public class CellFilter implements IFilter {
     @Override
     public List<Cell> getCellsByRows(CellRange range, List<Integer> rows) {
         return byRange(range).stream().filter(cell -> rows.contains(cell.getPosition().row())).toList();
+    }
+
+    private boolean isCellInSelectedValues(Cell cell, Map<Character, String> selectedValues) {
+        return selectedValues.containsKey(cell.getPosition().column())
+                && selectedValues.get(cell.getPosition().column()).equals(cell.getEffectiveValue());
     }
 }

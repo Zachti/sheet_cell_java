@@ -112,7 +112,7 @@ public final class Sheet implements ISheet {
     }
 
     @Override
-    public Map<IPosition, Cell> getCellsByFilter(CellRange range, List<Object> selectedValues) {
+    public Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues) {
         return executeWithContext(() -> cellManager.getCellsByFilter(range, selectedValues));
     }
 
@@ -122,7 +122,7 @@ public final class Sheet implements ISheet {
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd) {
+    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
         return executeWithContext(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
     }
 

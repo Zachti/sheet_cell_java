@@ -114,7 +114,7 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public Map<IPosition, Cell> getCellsByFilter(CellRange range, List<Object> selectedValues) {
+    public Map<IPosition, Cell> getCellsByFilter(CellRange range, Map<Character, String> selectedValues) {
         List<Integer> rows =  filter.ByValues(range, selectedValues);
         List<Cell> cells =  filter.getCellsByRows(range, rows);
         return cells.stream()
@@ -122,7 +122,7 @@ public class CellManager implements ICellManager {
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<List<Object>> selectedValues, boolean isAnd) {
+    public List<Integer> getRowsByMultiColumnsFilter(CellRange range, List<Map<Character, String>> selectedValues, boolean isAnd) {
         return filter.byMultiColumns(range, selectedValues, isAnd);
     }
 
