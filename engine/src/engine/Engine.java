@@ -10,6 +10,7 @@ import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
 import range.CellRange;
 import filter.dto.FilterConfig;
+import range.IRange;
 import sheet.dto.SortConfig;
 import sheet.interfaces.ISheet;
 
@@ -67,7 +68,7 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public List<CellRange> getRanges() {
+    public List<IRange> getRanges() {
         return safeExecute(sheet::getRanges);
     }
 

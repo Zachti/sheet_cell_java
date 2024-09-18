@@ -8,6 +8,7 @@ import filter.dto.MultiColumnsFilterConfig;
 import position.interfaces.IPosition;
 import range.CellRange;
 import filter.dto.FilterConfig;
+import range.IRange;
 import sheet.dto.SortConfig;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface IEngine {
     CellDetails getCellDetails(IPosition position);
     void addRange(CellRange range);
     void removeRange(String rangeName);
-    List<CellRange> getRanges();
+    List<IRange> getRanges();
     List<Cell> viewCellsInRange(CellRange range);
     Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig);
     List<Integer> sortRowsInRange(SortConfig sortConfig);
