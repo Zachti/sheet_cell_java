@@ -30,7 +30,7 @@ public class NewSheetConfigurationFactory extends SheetConfigurationFactory {
         int cols = sheet.getSTLLayout().getColumns();
         List<Cell> cells = xmlCellsToCells(sheet.getSTLCells().getSTLCell());
         safeExecute(() -> cells.forEach(Cell::setEffectiveValue), cells);
-        return new CreateSheetDto(name, rows, cols, cells);
+        return new CreateSheetDto(name, rows, cols, cells, getRanges(sheet.getSTLRanges().getSTLRange()));
     }
 
     @Override

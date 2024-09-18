@@ -6,13 +6,14 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
 import range.IRange;
+import sheet.SheetHistory;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ISheet extends Cloneable {
     void updateCell(UpdateCellDto updateCellDto);
-    Map<IPosition, Cell> getPastVersion(int version);
+    SheetHistory getPastVersion(int version);
     Cell getCellByPosition(IPosition position);
     String getName();
     void validatePositionOnSheet(IPosition position);

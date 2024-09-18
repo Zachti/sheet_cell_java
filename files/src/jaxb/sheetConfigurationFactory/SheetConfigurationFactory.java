@@ -7,13 +7,19 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import jaxb.dto.SheetConfiguration;
 import jaxb.generated.STLCell;
+import jaxb.generated.STLRange;
 import jaxb.generated.STLSheet;
+import position.PositionFactory;
+import position.interfaces.IPosition;
+import range.CellRange;
+import range.IRange;
 import store.SetContextStore;
 
 import java.io.File;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class SheetConfigurationFactory {
     protected STLSheet stlSheet;
@@ -49,5 +55,19 @@ public abstract class SheetConfigurationFactory {
         SetContextStore.getCellSetStore().setContext(cells);
         runnable.run();
         SetContextStore.getCellSetStore().clearContext();
+    }
+
+    protected Map<String, IRange> getRanges(List<STLRange> ranges) {
+        return ranges.stream()
+                .collect(Collectors.toMap(
+                        STLRange::getName,
+                        this::STLRangeToCellRange
+                ));
+    }
+
+    private IRange STLRangeToCellRange(STLRange range) {
+        IPosition from = PositionFactory.create(range.getSTLBoundaries().getFrom());
+        IPosition to = PositionFactory.create(range.getSTLBoundaries().getTo());
+        return CellRange.of(range.getName(), from, to);
     }
 }

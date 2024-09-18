@@ -6,12 +6,13 @@ import position.interfaces.IPosition;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class CellRange implements IRange{
+public class CellRange implements IRange, Cloneable {
     private final String name;
     private final IPosition start;
     private final IPosition end;
-    private final Map<IPosition, Cell> users;
+    private Map<IPosition, Cell> users;
 
     private CellRange(String name, IPosition start, IPosition end, Map<IPosition, Cell> users) {
         this.name = name;
@@ -47,6 +48,18 @@ public class CellRange implements IRange{
     public boolean contains(IPosition position) {
         return position.column() >= start.column() && position.column() <= end.column() &&
                 position.row() >= start.row() && position.row() <= end.row();
+    }
+
+    @Override
+    public CellRange clone() {
+        try {
+            CellRange cellRange = (CellRange) super.clone();
+            cellRange.users = this.users.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().clone()));
+            return cellRange;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static CellRange of(String name, IPosition start, IPosition end) {

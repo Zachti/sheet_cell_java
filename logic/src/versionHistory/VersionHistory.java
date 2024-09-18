@@ -1,6 +1,5 @@
 package versionHistory;
 
-import java.util.Map;
 import java.util.TreeMap;
 
 import static common.utils.InputValidation.validateOrThrow;

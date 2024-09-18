@@ -15,6 +15,8 @@ import sheet.interfaces.ISheet;
 import sheet.cellManager.CellManager;
 import sheet.cellManager.ICellManager;
 import store.TypedContextStore;
+import versionHistory.IVersionHistory;
+import versionHistory.VersionHistory;
 
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -22,16 +24,19 @@ import java.util.*;
 public final class Sheet implements ISheet {
     private final String name;
     private int version = 1;
-    private ICache<Integer, Map<IPosition, Cell>> versionHistoryCache;
+    private ICache<Integer, SheetHistory> versionHistoryCache;
     private Map<Integer,Integer> version2updateCount = new HashMap<>();
     private final ICellManager cellManager;
     private final Map<String, IRange> ranges = new HashMap<>();
+    private final IVersionHistory<Map<String, IRange>> rangesHistory;
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
         cellManager = new CellManager(createSheetDto.numberOfRows(), createSheetDto.numberOfCols());
         executeWithContext(() -> version2updateCount.put(version, cellManager.initializeCells(createSheetDto.cells())));
         versionHistoryCache = new Cache<>(500, ChronoUnit.MILLIS);
+        Map<String, IRange> initialRanges = Objects.requireNonNullElse(createSheetDto.ranges(), new HashMap<>());
+        this.rangesHistory = new VersionHistory<>(initialRanges, 1);
     }
 
     public Sheet(CopySheetDto copySheetDto) {
@@ -49,9 +54,9 @@ public final class Sheet implements ISheet {
     }
 
     @Override
-    public Map<IPosition, Cell> getPastVersion(int version) {
+    public SheetHistory getPastVersion(int version) {
         return executeWithContext(() ->
-              versionHistoryCache.getOrElseUpdate(version, () -> cellManager.computePastVersion(version)));
+              versionHistoryCache.getOrElseUpdate(version, () -> this.computePastVersion(version)));
     }
 
     @Override
@@ -141,10 +146,17 @@ public final class Sheet implements ISheet {
         return executeWithContext(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
     }
 
+    private SheetHistory computePastVersion(int version) {
+        Map<IPosition, Cell> cellHistory = cellManager.computePastVersion(version);
+        Map<String, IRange> rangesHistory = this.rangesHistory.getByVersionOrUnder(version);
+        return new SheetHistory(cellHistory, rangesHistory);
+    }
+
     private void updateCellAndVersion(UpdateCellDto updateCellDto) {
         Cell cell = cellManager.update(updateCellDto, version + 1);
         version++;
         version2updateCount.put(version, cell.getObserversCount() + 1);
+        rangesHistory.addNewVersion(ranges, version);
     }
 
     private <T> T executeWithContext(IGenericHandler<T> handler) {
