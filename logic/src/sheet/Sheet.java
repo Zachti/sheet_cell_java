@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class Sheet implements ISheet {
+public final class Sheet implements ISheet, Cloneable {
     private final String name;
     private int version = 1;
     private ICache<Integer, SheetHistory> versionHistoryCache;
@@ -38,7 +38,7 @@ public final class Sheet implements ISheet {
         executeWithContext(() -> version2updateCount.put(version, cellManager.initializeCells(createSheetDto.cells())));
         versionHistoryCache = new Cache<>(500, ChronoUnit.MILLIS);
         Map<String, IRange> initialRanges = Objects.requireNonNullElse(createSheetDto.ranges(), new HashMap<>());
-        this.rangesHistory = new VersionHistory<>(initialRanges, 1);
+        this.rangesHistory = new VersionHistory<>(initialRanges, version);
     }
 
     public Sheet(CopySheetDto copySheetDto) {
@@ -121,13 +121,6 @@ public final class Sheet implements ISheet {
                 });
     }
 
-    private void removeRange(IRange range) {
-        if (!range.isValidToDelete()) {
-            throw new IllegalArgumentException("Cannot delete range " + range.getName() + " as it is not empty");
-        }
-        ranges.remove(range.getName());
-    }
-
     @Override
     public List<Cell> viewCellsInRange(IRange range) {
         return executeWithContext(() -> cellManager.getCellsInRange(range));
@@ -152,6 +145,13 @@ public final class Sheet implements ISheet {
         Map<IPosition, Cell> cellHistory = cellManager.computePastVersion(version);
         Map<String, IRange> rangesHistory = this.rangesHistory.getByVersionOrUnder(version);
         return new SheetHistory(cellHistory, rangesHistory);
+    }
+
+    private void removeRange(IRange range) {
+        if (!range.isValidToDelete()) {
+            throw new IllegalArgumentException("Cannot delete range " + range.getName() + " as it is not empty");
+        }
+        ranges.remove(range.getName());
     }
 
     private void updateCellAndVersion(UpdateCellDto updateCellDto) {
