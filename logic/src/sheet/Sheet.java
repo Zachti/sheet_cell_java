@@ -11,6 +11,7 @@ import position.interfaces.IPosition;
 import range.IRange;
 import sheet.dto.CopySheetDto;
 import sheet.dto.CreateSheetDto;
+import sheet.history.SheetHistory;
 import sheet.interfaces.ISheet;
 import sheet.cellManager.CellManager;
 import sheet.cellManager.ICellManager;

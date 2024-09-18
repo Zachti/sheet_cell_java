@@ -6,7 +6,7 @@ import cell.dto.CellDetails;
 import cell.dto.UpdateCellDto;
 import position.interfaces.IPosition;
 import range.IRange;
-import sheet.SheetHistory;
+import sheet.history.SheetHistory;
 
 import java.util.List;
 import java.util.Map;
