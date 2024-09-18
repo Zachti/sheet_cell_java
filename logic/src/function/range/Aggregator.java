@@ -3,12 +3,11 @@ package function.range;
 import function.Function;
 import function.enums.NumberOfArgs;
 import range.IRange;
+import sheet.interfaces.ISheet;
 import store.TypedContextStore;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static common.utils.ValueParser.isNumeric;
 import static java.lang.Double.NaN;
@@ -39,8 +38,9 @@ public abstract class Aggregator extends Function<Double> {
     private List<Double> rangeToValueList(List<Object> args) {
         List<Double> cellValues = new LinkedList<>();
         checkNumberOfArgs(args);
-        IRange range = argsToIRange(args);
-        TypedContextStore.getSheetStore().getContext().getCells().forEach((pos, cell) -> {
+        ISheet sheet = TypedContextStore.getSheetStore().getContext();
+        IRange range = argsToIRange(args.getFirst(), sheet);
+        sheet.getCells().forEach((pos, cell) -> {
             String value = cell.getEffectiveValue().replace(",", "");
             if (range.contains(pos) && isNumeric(value)) {
                 cellValues.add(Double.parseDouble(value));
@@ -50,10 +50,10 @@ public abstract class Aggregator extends Function<Double> {
         return cellValues;
     }
 
-    protected IRange argsToIRange(List<Object> args) {
-        return args.stream()
-                .map(IRange.class::cast)
-                .collect(Collectors.toCollection(ArrayList::new))
-                .getFirst();
+    protected IRange argsToIRange(Object arg, ISheet sheet) {
+        return sheet.getRanges().stream()
+                .filter(range -> range.getName().equals(arg))
+                .findFirst()
+                .orElseThrow();
     }
 }
