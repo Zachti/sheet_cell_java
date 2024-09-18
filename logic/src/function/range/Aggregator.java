@@ -1,5 +1,7 @@
 package function.range;
 
+import cell.Cell;
+import cell.observability.interfaces.ISubject;
 import function.Function;
 import function.enums.NumberOfArgs;
 import range.IRange;
@@ -18,6 +20,7 @@ public abstract class Aggregator extends Function<Double> {
     @Override
     public final Double execute(List<Object> args) {
         try {
+            checkNumberOfArgs(args);
             List<Double> values = rangeToValueList(args);
             return emptyOrCalculate(values);
         } catch (Exception e) {
@@ -37,14 +40,13 @@ public abstract class Aggregator extends Function<Double> {
 
     private List<Double> rangeToValueList(List<Object> args) {
         List<Double> cellValues = new LinkedList<>();
-        checkNumberOfArgs(args);
         ISheet sheet = TypedContextStore.getSheetStore().getContext();
         IRange range = argsToIRange(args.getFirst(), sheet);
+        Cell callingCell = (Cell) TypedContextStore.getSubjectStore().getContext();
         sheet.getCells().forEach((pos, cell) -> {
             String value = cell.getEffectiveValue().replace(",", "");
             if (range.contains(pos) && isNumeric(value)) {
-                cellValues.add(Double.parseDouble(value));
-                range.addUser(cell);
+                this.onCellInRange(callingCell, cell, cellValues, range, value);
             }
         });
         return cellValues;
@@ -55,5 +57,12 @@ public abstract class Aggregator extends Function<Double> {
                 .filter(range -> range.getName().equals(arg))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    private void onCellInRange(Cell callingCell, Cell inRangeCell, List<Double> cellValues, IRange range, String value) {
+        inRangeCell.addObserver(callingCell);
+        callingCell.addObservable(inRangeCell);
+        cellValues.add(Double.parseDouble(value));
+        range.addUser(callingCell);
     }
 }
