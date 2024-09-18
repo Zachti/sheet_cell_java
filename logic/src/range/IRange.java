@@ -14,4 +14,5 @@ public interface IRange {
     void addUser(Cell cell);
     void removeUser(IPosition pos);
     Map<IPosition, Cell> getUsers();
+    IRange clone();
 }

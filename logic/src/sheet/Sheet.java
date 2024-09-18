@@ -21,6 +21,7 @@ import versionHistory.VersionHistory;
 
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class Sheet implements ISheet {
     private final String name;
@@ -157,7 +158,10 @@ public final class Sheet implements ISheet {
         Cell cell = cellManager.update(updateCellDto, version + 1);
         version++;
         version2updateCount.put(version, cell.getObserversCount() + 1);
-        rangesHistory.addNewVersion(ranges, version);
+        Map<String, IRange> clonedRanges = ranges.entrySet().stream()
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().clone()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        rangesHistory.addNewVersion(clonedRanges, version);
     }
 
     private <T> T executeWithContext(IGenericHandler<T> handler) {
