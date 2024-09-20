@@ -10,12 +10,13 @@ import range.CellRange;
 import filter.dto.FilterConfig;
 import range.IRange;
 import sheet.dto.SortConfig;
+import sheet.history.SheetHistory;
 
 import java.util.List;
 import java.util.Map;
 
 public interface IEngine {
-    Map<IPosition, Cell> getHistory(int version);
+    SheetHistory getHistory(int version);
     String getSheetName();
     Map<Integer, Integer> getUpdateCountList();
     void updateCell(UpdateCellDto updateCellDto);

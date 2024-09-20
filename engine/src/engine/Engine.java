@@ -12,6 +12,7 @@ import range.CellRange;
 import filter.dto.FilterConfig;
 import range.IRange;
 import sheet.dto.SortConfig;
+import sheet.history.SheetHistory;
 import sheet.interfaces.ISheet;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public Map<IPosition, Cell> getHistory(int version) {
+    public SheetHistory getHistory(int version) {
         return safeExecute(() -> sheet.getPastVersion(version));
     }
 
