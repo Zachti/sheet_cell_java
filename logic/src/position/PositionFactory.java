@@ -10,7 +10,7 @@ public class PositionFactory {
 
     private static final Map<String, Position> cachedPositions = new HashMap<>();
 
-    private static Position create(int row, char column) {
+    public static Position create(int row, char column) {
         String key = row + ":" + column;
 
         return cachedPositions.computeIfAbsent(key, value -> new Position(row, column));
