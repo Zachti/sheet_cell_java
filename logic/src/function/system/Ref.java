@@ -44,7 +44,7 @@ public final class Ref extends Function<Object> {
     }
 
     private Cell argToCell(Object arg) {
-        IPosition position = PositionFactory.create((String) arg);
+        IPosition position = PositionFactory.create(((String) arg).toUpperCase());
         return searchCellInStores(position);
     }
 
