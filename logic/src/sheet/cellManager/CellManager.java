@@ -185,6 +185,7 @@ public class CellManager implements ICellManager {
 
     private void addNewVersionForUpdatedCells(Cell updatedCell, int toUpdateCellIndex, int version) {
         Set<ISubject> updatedCells = getAllAffectedCells(updatedCell);
+        updatedCells.add(updatedCell);
         topologicalSort.stream()
                 .skip(toUpdateCellIndex)
                 .filter(updatedCells::contains)
