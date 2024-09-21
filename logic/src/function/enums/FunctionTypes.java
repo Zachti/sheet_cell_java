@@ -50,7 +50,7 @@ public enum FunctionTypes {
     }
 
     public static IFunction getFunctionByName(String name) {
-        return string2Function.get(name);
+        return string2Function.get(name.toUpperCase());
     }
 
     public static List<String> toList() {
