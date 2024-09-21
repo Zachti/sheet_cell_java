@@ -127,7 +127,7 @@ public final class Sheet implements ISheet, Cloneable {
     }
 
     @Override
-    public Map<IPosition, Cell> getCellsByFilter(IRange range, Map<Character, List<String>> selectedValues) {
+    public Map<IPosition, Cell> getCellsByFilter(IRange range, List<String> selectedValues) {
         return executeWithContext(() -> cellManager.getCellsByFilter(range, selectedValues));
     }
 
@@ -137,7 +137,7 @@ public final class Sheet implements ISheet, Cloneable {
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(IRange range, List<Map<Character, List<String>>> selectedValues, boolean isAnd) {
+    public List<Integer> getRowsByMultiColumnsFilter(IRange range, Map<Character, List<String>> selectedValues, boolean isAnd) {
         return executeWithContext(() -> cellManager.getRowsByMultiColumnsFilter(range, selectedValues, isAnd));
     }
 

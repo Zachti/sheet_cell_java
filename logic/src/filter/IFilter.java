@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface IFilter {
     List<Cell> byRange(IRange range);
-    List<Integer> ByValues(IRange range, Map<Character, List<String>> selectedValues);
-    List<Integer> byMultiColumns(IRange range, List<Map<Character, List<String>>> selectedValues, boolean isAnd);
+    List<Integer> ByValues(IRange range, List<String> selectedValues);
+    List<Integer> byMultiColumns(IRange range, Map<Character, List<String>> selectedValues, boolean isAnd);
     List<Cell> getCellsByRows(IRange range, List<Integer> rows);
 }

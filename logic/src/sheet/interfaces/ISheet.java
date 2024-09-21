@@ -26,9 +26,9 @@ public interface ISheet extends Cloneable {
     List<IRange> getRanges();
     void removeRangeOrThrow(String rangeName);
     List<Cell> viewCellsInRange(IRange range);
-    Map<IPosition, Cell> getCellsByFilter(IRange range, Map<Character, List<String>> selectedValues);
+    Map<IPosition, Cell> getCellsByFilter(IRange range, List<String> selectedValues);
     List<Integer> sortRowsInRange(IRange range, List<Character> columns, boolean ascending);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
-    List<Integer> getRowsByMultiColumnsFilter(IRange range, List<Map<Character, List<String>>> selectedValues, boolean isAnd);
+    List<Integer> getRowsByMultiColumnsFilter(IRange range, Map<Character, List<String>> selectedValues, boolean isAnd);
 }
 
