@@ -94,7 +94,7 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig) {
+    public Map<IPosition, Cell> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig) {
         return safeExecute(() -> sheet.getRowsByMultiColumnsFilter(filterConfig.range(), filterConfig.selectedValues(), filterConfig.isAnd()));
     }
 

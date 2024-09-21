@@ -5,7 +5,9 @@ import position.interfaces.IPosition;
 import range.IRange;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class CellFilter implements IFilter {
@@ -24,52 +26,62 @@ public class CellFilter implements IFilter {
     }
 
     @Override
-    public List<Integer> ByValues(IRange range, List<String> selectedValues) {
-        return byRange(range).stream()
+    public Map<IPosition, Cell> ByValues(IRange range, List<String> selectedValues) {
+        List<Integer> rows = byRange(range).stream()
                 .filter(cell -> selectedValues.contains(cell.getEffectiveValue()))
                 .map(cell -> cell.getPosition().row())
-                .collect(Collectors.toList());
+                .toList();
+        return rowsToCellMap(range, rows);
     }
 
     @Override
-    public List<Integer> byMultiColumns(IRange range, Map<Character,  List<String>> selectedValues, boolean isAnd) {
-        return isAnd ? ByAndValues(range, selectedValues) : ByOrValues(range, selectedValues);
+    public Map<IPosition, Cell> byMultiColumns(IRange range, Map<Character,  List<String>> selectedValues, boolean isAnd) {
+        return isAnd ? ByAndValues(range, selectedValues) : null; //ByOrValues(range, selectedValues);
     }
 
-    private List<Integer> ByAndValues(IRange range, Map<Character,  List<String>> selectedValues) {
+    private Map<IPosition, Cell> ByAndValues(IRange range, Map<Character,  List<String>> selectedValues) {
         List<Integer> rows = selectedValues.values().stream()
-                .flatMap(values -> ByValues(range, values).stream()).toList();
-        return rows.stream().map(this::rowIndexToValueList)
-                .filter(rowValues -> containsAtLeastOneFromEachCol(rowValues, selectedValues))
-                .flatMap(rowValues -> rowValues.keySet().stream()).toList();
+                .flatMap(values -> ByValues(range, values).keySet().stream())
+                .map(IPosition::row)
+                .distinct()
+                .filter(row -> containsAtLeastOneFromEachCol(row, selectedValues)).toList();
+        return rowsToCellMap(range, rows);
+
     }
 
-    private List<Integer> ByOrValues(IRange range, Map<Character,  List<String>> selectedValues) {
-        return selectedValues.values().stream()
-                .map(values -> ByValues(range, values))
-                .reduce((rows1, rows2) -> Stream.concat(rows1.stream(), rows2.stream()).distinct().collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
-    }
+//    private Map<IPosition, Cell> ByOrValues(IRange range, Map<Character,  List<String>> selectedValues) {
+//            List<Integer> rows = selectedValues.values().stream()
+//                    .flatMap(values -> ByValues(range, values).keySet().stream())
+//                    .map(IPosition::row)
+//                    .distinct().toList();
+//            rows.stream()
+//                    .reduce((row1, row2) -> Stream.concat(row1, row2).distinct().collect(Collectors.toList()))
+//                    .orElse(Collections.emptyList());
+//    }
 
-    @Override
-    public List<Cell> getCellsByRows(IRange range, List<Integer> rows) {
+    private List<Cell> getCellsByRows(IRange range, List<Integer> rows) {
         return byRange(range).stream().filter(cell -> rows.contains(cell.getPosition().row())).toList();
     }
 
-    private Map<Integer, String> rowIndexToValueList(int row) {
-        Map<Integer, String> rowValues = new HashMap<>();
+    private List<String> rowIndexToValueList(int row) {
+        List<String> rowValues = new ArrayList<>();
         position2Cell.forEach((key, value) -> {
             if (key.row() == row) {
-                rowValues.put(row, value.getEffectiveValue());
+                rowValues.add(value.getEffectiveValue());
             }
         });
         return rowValues;
     }
 
-    private boolean containsAtLeastOneFromEachCol(Map<Integer, String> rowValues, Map<Character, List<String>> selectedValues) {
+    private boolean containsAtLeastOneFromEachCol(Integer row, Map<Character, List<String>> selectedValues) {
         return selectedValues.entrySet().stream()
                 .allMatch(entry ->
-                        rowValues.values().stream()
+                        rowIndexToValueList(row).stream()
                                 .anyMatch(value -> entry.getValue().contains(value)));
+    }
+
+    private Map<IPosition, Cell> rowsToCellMap(IRange range, List<Integer> rows) {
+        return getCellsByRows(range, rows).stream()
+                .collect(Collectors.toMap(Cell::getPosition, Function.identity()));
     }
 }

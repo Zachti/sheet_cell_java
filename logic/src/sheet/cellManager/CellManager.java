@@ -118,14 +118,11 @@ public class CellManager implements ICellManager {
 
     @Override
     public Map<IPosition, Cell> getCellsByFilter(IRange range, List<String> selectedValues) {
-        List<Integer> rows =  filter.ByValues(range, selectedValues);
-        List<Cell> cells =  filter.getCellsByRows(range, rows);
-        return cells.stream()
-                .collect(Collectors.toMap(Cell::getPosition, Function.identity()));
+         return filter.ByValues(range, selectedValues);
     }
 
     @Override
-    public List<Integer> getRowsByMultiColumnsFilter(IRange range, Map<Character, List<String>> selectedValues, boolean isAnd) {
+    public Map<IPosition, Cell> getRowsByMultiColumnsFilter(IRange range, Map<Character, List<String>> selectedValues, boolean isAnd) {
         return filter.byMultiColumns(range, selectedValues, isAnd);
     }
 

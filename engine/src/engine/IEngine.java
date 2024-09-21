@@ -29,5 +29,5 @@ public interface IEngine {
     Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig);
     List<Integer> sortRowsInRange(SortConfig sortConfig);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
-    List<Integer> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig);
+    Map<IPosition, Cell> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig);
 }
