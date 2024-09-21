@@ -25,10 +25,7 @@ public abstract class Function<T> implements IFunction {
                     .map(type::cast)
                     .collect(Collectors.toCollection(ArrayList::new));
         } catch (ClassCastException e) {
-            if (!TypedContextStore.getIsObserverUpdateStore().getContext()) {
-                throw new ClassCastException("Function arguments must be of the same type! (either both strings or both numbers)");
-            }
-            throw new InvalidObserverUpdateException();
+            throw new ClassCastException("Function arguments must be of the same type! (either both strings or both numbers)");
         }
     }
 

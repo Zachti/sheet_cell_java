@@ -1,6 +1,5 @@
 package function.Math;
 
-import common.exception.InvalidObserverUpdateException;
 import function.Function;
 
 import java.util.List;
@@ -15,7 +14,7 @@ public abstract class Operator extends Function<Double> {
         try {
             List<Double> operands = parse(args);
             return calc(operands);
-        } catch (ArithmeticException | InvalidObserverUpdateException e) {
+        } catch (Exception e) {
             return NaN;
         }
     }
