@@ -24,7 +24,7 @@ public class FunctionInputValidator {
 
         List<String> parts = splitFunction(input);
 
-        return FunctionTypes.toList().contains(parts.getFirst()) && parts.stream().skip(1).allMatch(FunctionInputValidator::isValidArgument);
+        return FunctionTypes.toList().contains(parts.getFirst().toUpperCase()) && parts.stream().skip(1).allMatch(FunctionInputValidator::isValidArgument);
     }
 
     private static boolean isValidArgument(String arg) {
