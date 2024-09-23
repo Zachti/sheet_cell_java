@@ -102,6 +102,7 @@ public class CellManager implements ICellManager {
         return getCellsInRange(range).stream()
                 .map(cell -> cell.getPosition().row())
                 .sorted(new RowComparator(columns, ascending))
+                .distinct()
                 .collect(Collectors.toList());
     }
 
