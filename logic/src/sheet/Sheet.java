@@ -122,8 +122,13 @@ public final class Sheet implements ISheet, Cloneable {
     }
 
     @Override
-    public List<Cell> viewCellsInRange(IRange range) {
-        return executeWithContext(() -> cellManager.getCellsInRange(range));
+    public Map<IPosition, Cell> viewCellsInRange(IRange range) {
+         return executeWithContext(() -> cellManager.getCellsInRange(range)
+                .stream()
+                .collect(Collectors.toMap(
+                Cell::getPosition,
+                cell -> cell
+        )));
     }
 
     @Override

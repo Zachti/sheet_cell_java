@@ -74,7 +74,7 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public List<Cell> viewCellsInRange(CellRange range) {
+    public Map<IPosition, Cell> viewCellsInRange(CellRange range) {
         return safeExecute(() -> sheet.viewCellsInRange(range));
     }
 

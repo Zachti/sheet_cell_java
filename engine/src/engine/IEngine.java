@@ -25,7 +25,7 @@ public interface IEngine {
     void addRange(CellRange range);
     void removeRange(String rangeName);
     List<IRange> getRanges();
-    List<Cell> viewCellsInRange(CellRange range);
+    Map<IPosition, Cell> viewCellsInRange(CellRange range);
     Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig);
     List<Integer> sortRowsInRange(SortConfig sortConfig);
     Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
