@@ -19,7 +19,8 @@ public class RowComparator implements Comparator<Integer> {
     private static final Map<CellType, BiFunction<String, String, Integer>> COMPARATORS = Map.of(
             CellType.NUMERIC, RowComparator::compareNumbers,
             CellType.TEXT, RowComparator::compareStrings,
-            CellType.BOOLEAN, RowComparator::compareBooleans
+            CellType.BOOLEAN, RowComparator::compareBooleans,
+            CellType.EMPTY, (v1, v2) -> 0
     );
 
     public RowComparator(List<Character> columns, boolean ascending) {
