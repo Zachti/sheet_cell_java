@@ -18,6 +18,7 @@ import sheet.interfaces.ISheet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 public final class Engine implements IEngine {
     private final ISheet sheet;
@@ -76,6 +77,14 @@ public final class Engine implements IEngine {
     @Override
     public List<Cell> viewCellsInRange(CellRange range) {
         return safeExecute(() -> sheet.viewCellsInRange(range));
+    }
+
+    @Override
+    public Map<IPosition, Cell> viewCellsInRange2Map(CellRange range) {
+        return safeExecute(() -> sheet.viewCellsInRange(range).stream().collect(Collectors.toMap(
+                Cell::getPosition,
+                cell -> cell
+        )));
     }
 
     @Override

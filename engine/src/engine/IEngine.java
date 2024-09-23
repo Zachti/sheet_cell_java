@@ -30,4 +30,5 @@ public interface IEngine {
     List<Integer> sortRowsInRange(SortConfig sortConfig);
     Map<IPosition, Cell> getWhatIfCells(UpdateCellDto updateCellDtos);
     Map<IPosition, Cell> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig);
+    Map<IPosition, Cell> viewCellsInRange2Map(CellRange range);
 }
