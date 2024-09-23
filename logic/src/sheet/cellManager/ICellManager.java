@@ -16,7 +16,7 @@ public interface ICellManager {
     void validatePositionOnSheet(IPosition position);
     Map<IPosition, Cell> getCells();
     List<Integer> sortRowsInRange(IRange range, List<Character> columns, boolean ascending);
-    Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
+    Map<IPosition, Cell> getWhatIfCells(UpdateCellDto updateCellDto);
     Map<IPosition, Cell> getCellsByFilter(IRange range, List<String> selectedValues);
     Map<IPosition, Cell> getRowsByMultiColumnsFilter(IRange range, Map<Character, List<String>> selectedValues, boolean isAnd);
     List<Cell> getCellsInRange(IRange range);

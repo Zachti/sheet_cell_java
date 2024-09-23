@@ -28,6 +28,6 @@ public interface IEngine {
     Map<IPosition, Cell> viewCellsInRange(CellRange range);
     Map<IPosition, Cell> getCellsByFilter(FilterConfig filterConfig);
     List<Integer> sortRowsInRange(SortConfig sortConfig);
-    Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos);
+    Map<IPosition, Cell> getWhatIfCells(UpdateCellDto updateCellDtos);
     Map<IPosition, Cell> getRowsByMultiColumnsFilter(MultiColumnsFilterConfig filterConfig);
 }

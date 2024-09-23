@@ -89,8 +89,8 @@ public final class Engine implements IEngine {
     }
 
     @Override
-    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
-        return safeExecute(() -> sheet.getWhatIfCells(updateCellDtos));
+    public Map<IPosition, Cell> getWhatIfCells(UpdateCellDto updateCellDto) {
+        return safeExecute(() -> sheet.getWhatIfCells(updateCellDto));
     }
 
     @Override

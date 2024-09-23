@@ -96,7 +96,7 @@ public final class Sheet implements ISheet, Cloneable {
     public Map<IPosition, Cell> getCells() { return cellManager.getCells(); }
 
     @Override
-    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) { return cellManager.getWhatIfCells(updateCellDtos); }
+    public Map<IPosition, Cell> getWhatIfCells(UpdateCellDto updateCellDto) { return cellManager.getWhatIfCells(updateCellDto); }
 
     @Override
     public int getVersion() { return version; }

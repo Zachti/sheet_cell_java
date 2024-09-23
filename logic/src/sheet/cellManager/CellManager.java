@@ -106,10 +106,10 @@ public class CellManager implements ICellManager {
     }
 
     @Override  
-    public Map<IPosition, Cell> getWhatIfCells(List<UpdateCellDto> updateCellDtos) {
+    public Map<IPosition, Cell> getWhatIfCells(UpdateCellDto updateCellDto) {
         Map<IPosition, Cell> whatIfCells = new HashMap<>(position2Cell);
         CellManager whatIfManager = new CellManager(whatIfCells);
-        updateCellDtos.forEach(updateCellDto -> whatIfManager.update(updateCellDto, 0));
+        whatIfManager.update(updateCellDto, 0);
         return whatIfManager.getCells();
     }
 
