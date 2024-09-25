@@ -41,13 +41,13 @@ public final class EvaluationNode implements INode {
     }
 
     private Object getArgsAndEvaluate() {
-        TypedContextStore.getSubjectStore().setContext(parent);
         SetContextStore.getNodeParentStore().setContext(getNodeParentsContext());
         try {
-        List<Object> args = children.stream()
-                .map(INode::getNodeValue)
-                .toList();
-        return function.execute(args);
+            List<Object> args = children.stream()
+                    .map(INode::getNodeValue)
+                    .toList();
+            TypedContextStore.getSubjectStore().setContext(parent);
+            return function.execute(args);
         } finally {
             TypedContextStore.getSubjectStore().clearContext();
             SetContextStore.getNodeParentStore().clearContext();

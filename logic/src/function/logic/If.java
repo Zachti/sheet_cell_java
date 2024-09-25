@@ -20,7 +20,7 @@ public class If extends Function<Object> {
     }
 
     private Object applyCondition(List<Object> args) {
-        boolean condition = (Boolean) args.getFirst();
+        boolean condition = getCondition(args.getFirst().toString());
         Object then = args.get(1);
         Object elze = args.getLast();
         validateReturnType(then, elze);
@@ -51,5 +51,12 @@ public class If extends Function<Object> {
         ISubject callingCell = TypedContextStore.getSubjectStore().getContext();
         return Optional.ofNullable(callingCell)
                 .orElseThrow(() -> new IllegalArgumentException("No calling cell context set"));
+    }
+
+    private boolean getCondition(String strCondition) {
+        if (!strCondition.equalsIgnoreCase("true") && !strCondition.equalsIgnoreCase("false")) {
+            throw new IllegalArgumentException("Invalid boolean value: " + strCondition);
+        }
+        return Boolean.parseBoolean(strCondition);
     }
 }
