@@ -10,6 +10,7 @@ import store.TypedContextStore;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static common.utils.ValueParser.isNumeric;
 import static java.lang.Double.NaN;
@@ -53,8 +54,13 @@ public abstract class Aggregator extends Function<Double> {
     }
 
     protected IRange argsToIRange(Object arg, ISheet sheet) {
+        Map<String, IRange> ranges = TypedContextStore.getRangesStore().getContext();
+        String stringArg = arg.toString();
+        if (ranges != null && ranges.containsKey(stringArg)) {
+            return ranges.get(stringArg);
+        }
         return sheet.getRanges().stream()
-                .filter(range -> range.getName().equals(arg))
+                .filter(range -> range.getName().equals(stringArg))
                 .findFirst()
                 .orElseThrow();
     }
