@@ -74,6 +74,9 @@ public class RowComparator implements Comparator<Integer> {
     }
 
     private int compareByType(CellType type1, CellType type2, String value1, String value2) {
+        if (type1 == CellType.EMPTY || type2 == CellType.EMPTY) {
+            return compareEmpty(value1, value2);
+        }
         return (type1.equals(type2) ? COMPARATORS.get(type1) : DEFAULT_COMPARATOR).apply(value1, value2);
     }
 }
