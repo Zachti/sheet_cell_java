@@ -59,7 +59,7 @@ public final class Ref extends Function<Object> {
         return sheet.getCellByPosition(toSearch);
     }
 
-    private Cell searchInCellsStore(IPosition toSearch) {
+        private Cell searchInCellsStore(IPosition toSearch) {
         Set<Cell> cells = SetContextStore.getCellSetStore().getContext();
         return cells.stream().filter(cell -> cell.getPosition().equals(toSearch))
                 .findFirst()

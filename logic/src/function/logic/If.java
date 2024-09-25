@@ -39,7 +39,7 @@ public class If extends Function<Object> {
 
     private void setObservers() {
         ISubject callingCell = getCallingCell();
-        Set<Cell> references = SetContextStore.getCellSetStore().getContext();
+        Set<Cell> references = SetContextStore.getNodeParentStore().getContext();
         Optional.ofNullable(references)
                 .ifPresent(cells -> cells.forEach(cell -> {
                     cell.addObserver(callingCell);

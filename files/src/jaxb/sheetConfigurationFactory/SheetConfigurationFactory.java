@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class SheetConfigurationFactory {
@@ -52,9 +53,12 @@ public abstract class SheetConfigurationFactory {
     }
 
     protected void safeExecute(Runnable runnable,  List<Cell> cells) {
-        SetContextStore.getCellSetStore().setContext(cells);
-        runnable.run();
-        SetContextStore.getCellSetStore().clearContext();
+        try {
+            SetContextStore.getCellSetStore().setContext(cells);
+            runnable.run();
+        } finally {
+            SetContextStore.getCellSetStore().clearContext();
+        }
     }
 
     protected Map<String, IRange> getRanges(List<STLRange> ranges) {

@@ -42,7 +42,7 @@ public final class EvaluationNode implements INode {
 
     private Object getArgsAndEvaluate() {
         TypedContextStore.getSubjectStore().setContext(parent);
-        SetContextStore.getCellSetStore().setContext(getNodeParentsContext());
+        SetContextStore.getNodeParentStore().setContext(getNodeParentsContext());
         try {
         List<Object> args = children.stream()
                 .map(INode::getNodeValue)
@@ -50,7 +50,7 @@ public final class EvaluationNode implements INode {
         return function.execute(args);
         } finally {
             TypedContextStore.getSubjectStore().clearContext();
-            SetContextStore.getCellSetStore().clearContext();
+            SetContextStore.getNodeParentStore().clearContext();
         }
     }
 

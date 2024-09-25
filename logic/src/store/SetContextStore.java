@@ -13,6 +13,7 @@ public final class SetContextStore<T extends ISubject> { // both stores are sing
     private final IStore<Set<T>> contextStore = new ContextStore<>();
     private static final SetContextStore<Cell> CELL_SET_CONTEXT_STORE = new SetContextStore<>();
     private static final SetContextStore<ISubject> SUBJECT_SET_CONTEXT_STORE = new SetContextStore<>();
+    private static final SetContextStore<Cell> NODE_PARENT_CONTEXT_STORE = new SetContextStore<>();
 
     public void setContext(List<T> cells) { contextStore.set(new HashSet<>(cells)); }
 
@@ -25,4 +26,6 @@ public final class SetContextStore<T extends ISubject> { // both stores are sing
     public static SetContextStore<Cell> getCellSetStore() { return CELL_SET_CONTEXT_STORE; }
 
     public static SetContextStore<ISubject> getSubjectSetStore() { return SUBJECT_SET_CONTEXT_STORE; }
+
+    public static SetContextStore<Cell> getNodeParentStore() { return NODE_PARENT_CONTEXT_STORE; }
 }
