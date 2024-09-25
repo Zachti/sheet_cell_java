@@ -64,9 +64,7 @@ public class RowComparator implements Comparator<Integer> {
     }
 
     private static int compareEmpty(String value1, String value2) {
-        if (value1.isEmpty() && !value2.isEmpty()) return -1;
-        if (value2.isEmpty() && !value1.isEmpty()) return 1;
-        return 0;
+        return (value1.isEmpty() && value2.isEmpty()) ? 0 : value1.isEmpty() ? 1 : -1;
     }
 
     private String getCellCompareDetails(ISheet sheet, Integer row, Character column) {
