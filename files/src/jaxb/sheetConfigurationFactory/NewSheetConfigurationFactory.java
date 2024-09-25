@@ -5,11 +5,13 @@ import cell.dto.CreateCellDto;
 import jaxb.dto.SheetConfiguration;
 import jaxb.generated.STLCell;
 import jaxb.generated.STLSheet;
+import range.IRange;
 import sheet.Sheet;
 import sheet.dto.CreateSheetDto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class NewSheetConfigurationFactory extends SheetConfigurationFactory {
 
@@ -29,8 +31,9 @@ public class NewSheetConfigurationFactory extends SheetConfigurationFactory {
         int rows = sheet.getSTLLayout().getRows();
         int cols = sheet.getSTLLayout().getColumns();
         List<Cell> cells = xmlCellsToCells(sheet.getSTLCells().getSTLCell());
-        safeExecute(() -> cells.forEach(Cell::setEffectiveValue), cells);
-        return new CreateSheetDto(name, rows, cols, cells, getRanges(sheet.getSTLRanges().getSTLRange()));
+        Map<String, IRange> ranges = getRanges(sheet.getSTLRanges().getSTLRange());
+        safeExecute(() -> cells.forEach(Cell::setEffectiveValue), cells, ranges);
+        return new CreateSheetDto(name, rows, cols, cells, ranges);
     }
 
     @Override

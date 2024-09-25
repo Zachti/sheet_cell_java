@@ -14,12 +14,12 @@ import position.interfaces.IPosition;
 import range.CellRange;
 import range.IRange;
 import store.SetContextStore;
+import store.TypedContextStore;
 
 import java.io.File;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class SheetConfigurationFactory {
@@ -38,7 +38,7 @@ public abstract class SheetConfigurationFactory {
     protected abstract void createCell(STLCell stlCell, List<Cell> cells);
 
     protected void safeCreateCell(STLCell stlCell, List<Cell> cells) {
-        safeExecute(() -> createCell(stlCell, cells), cells);
+        safeExecute(() -> createCell(stlCell, cells), cells, null);
     }
 
     public static SheetConfigurationFactory newInstance(SheetOption option) {
@@ -52,12 +52,14 @@ public abstract class SheetConfigurationFactory {
         ));
     }
 
-    protected void safeExecute(Runnable runnable,  List<Cell> cells) {
+    protected void safeExecute(Runnable runnable,  List<Cell> cells, Map<String, IRange> ranges) {
         try {
             SetContextStore.getCellSetStore().setContext(cells);
+            TypedContextStore.getRangesStore().setContext(ranges);
             runnable.run();
         } finally {
             SetContextStore.getCellSetStore().clearContext();
+            TypedContextStore.getRangesStore().clearContext();
         }
     }
 
