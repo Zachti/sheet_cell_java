@@ -1,16 +1,19 @@
 package function.range;
 
 import cell.Cell;
-import cell.observability.interfaces.ISubject;
 import function.Function;
 import function.enums.NumberOfArgs;
+import position.interfaces.IPosition;
 import range.IRange;
 import sheet.interfaces.ISheet;
+import store.SetContextStore;
 import store.TypedContextStore;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static common.utils.ValueParser.isNumeric;
 import static java.lang.Double.NaN;
@@ -44,7 +47,7 @@ public abstract class Aggregator extends Function<Double> {
         ISheet sheet = TypedContextStore.getSheetStore().getContext();
         IRange range = argsToIRange(args.getFirst(), sheet);
         Cell callingCell = (Cell) TypedContextStore.getSubjectStore().getContext();
-        sheet.getCells().forEach((pos, cell) -> {
+        getSheetCellsList(sheet).forEach((pos, cell) -> {
             String value = cell.getEffectiveValue().replace(",", "");
             if (range.contains(pos) && isNumeric(value)) {
                 this.onCellInRange(callingCell, cell, cellValues, range, value);
@@ -56,13 +59,12 @@ public abstract class Aggregator extends Function<Double> {
     protected IRange argsToIRange(Object arg, ISheet sheet) {
         Map<String, IRange> ranges = TypedContextStore.getRangesStore().getContext();
         String stringArg = arg.toString();
-        if (ranges != null && ranges.containsKey(stringArg)) {
-            return ranges.get(stringArg);
-        }
-        return sheet.getRanges().stream()
+        return (ranges != null && ranges.containsKey(stringArg))
+                ? ranges.get(stringArg)
+                : sheet.getRanges().stream()
                 .filter(range -> range.getName().equals(stringArg))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Range not found: " + stringArg));
     }
 
     private void onCellInRange(Cell callingCell, Cell inRangeCell, List<Double> cellValues, IRange range, String value) {
@@ -70,5 +72,12 @@ public abstract class Aggregator extends Function<Double> {
         callingCell.addObservable(inRangeCell);
         cellValues.add(Double.parseDouble(value));
         range.addUser(callingCell);
+    }
+
+    private Map<IPosition, Cell> getSheetCellsList(ISheet sheet) {
+        return Optional.ofNullable(sheet)
+                .map(ISheet::getCells)
+                .orElseGet(() -> SetContextStore.getCellSetStore()
+                        .getContext().stream().collect(Collectors.toMap(Cell::getPosition, cell -> cell)));
     }
 }
