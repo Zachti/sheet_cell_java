@@ -34,11 +34,12 @@ public final class Sheet implements ISheet, Cloneable {
 
     public Sheet(CreateSheetDto createSheetDto) {
         name = createSheetDto.name();
+        Map<String, IRange> initialRanges = Objects.requireNonNullElse(createSheetDto.ranges(), new HashMap<>());
+        this.rangesHistory = new VersionHistory<>(initialRanges, version);
+        ranges.putAll(initialRanges);
         cellManager = new CellManager(createSheetDto.numberOfRows(), createSheetDto.numberOfCols());
         executeWithContext(() -> version2updateCount.put(version, cellManager.initializeCells(createSheetDto.cells())));
         versionHistoryCache = new Cache<>(500, ChronoUnit.MILLIS);
-        Map<String, IRange> initialRanges = Objects.requireNonNullElse(createSheetDto.ranges(), new HashMap<>());
-        this.rangesHistory = new VersionHistory<>(initialRanges, version);
     }
 
     public Sheet(CopySheetDto copySheetDto) {
